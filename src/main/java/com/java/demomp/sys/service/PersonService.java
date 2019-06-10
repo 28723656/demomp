@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lost丶wind
  * @since 2019-06-10
  */
-public interface IPersonService extends IService<Person> {
+public interface PersonService extends IService<Person> {
 
+
+    Person save();
 }
