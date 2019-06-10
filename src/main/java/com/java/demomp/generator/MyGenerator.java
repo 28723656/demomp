@@ -48,6 +48,10 @@ public class MyGenerator {
         gc.setAuthor("lost丶wind");
         gc.setOpen(false);
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
+        gc.setActiveRecord(true);// 开启ar模式
+
+      //  gc.setEntityName("%sEntity");// %sEntity 生成 UserEntity
+
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
@@ -74,12 +78,12 @@ public class MyGenerator {
         };
 
         // 如果模板引擎是 freemarker
-       // String templatePath = "/templates/mapper.xml.ftl";
+        String templatePath = "/templates/mapper.xml.ftl";
         // 如果模板引擎是 velocity
         // String templatePath = "/templates/mapper.xml.vm";
 
         // 自定义输出配置
- /*       List<FileOutConfig> focList = new ArrayList<>();
+        List<FileOutConfig> focList = new ArrayList<>();
         // 自定义配置会被优先输出
         focList.add(new FileOutConfig(templatePath) {
             @Override
@@ -88,7 +92,7 @@ public class MyGenerator {
                 return projectPath + "/src/main/resources/mapper/" + pc.getModuleName()
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
-        });*/
+        });
         /*
         cfg.setFileCreate(new IFileCreate() {
             @Override
@@ -99,11 +103,11 @@ public class MyGenerator {
             }
         });
         */
-     /*   cfg.setFileOutConfigList(focList);
+        cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
-*/
+
         // 配置模板
-//        TemplateConfig templateConfig = new TemplateConfig();
+        TemplateConfig templateConfig = new TemplateConfig();
 
         // 配置自定义输出模板
         //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
@@ -111,23 +115,24 @@ public class MyGenerator {
         // templateConfig.setService();
         // templateConfig.setController();
 
-//        templateConfig.setXml(null);
-//        mpg.setTemplate(templateConfig);
+        templateConfig.setXml(null);
+        mpg.setTemplate(templateConfig);
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        strategy.setSuperEntityClass("com.java.demomp.BaseEntity");
+      // strategy.setSuperEntityClass("com.java.demomp.entity.BaseEntity");
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-        strategy.setSuperControllerClass("com.java.demomp.BaseController");
+      //  strategy.setSuperControllerClass("com.java.demomp.controller.BaseController");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
         strategy.setSuperEntityColumns("id");
+        strategy.setTablePrefix("t_");  //表前缀
         strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(pc.getModuleName() + "_");
+      //  strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);
-     //   mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();
     }
 
