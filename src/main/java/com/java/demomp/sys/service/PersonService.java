@@ -3,6 +3,8 @@ package com.java.demomp.sys.service;
 import com.java.demomp.sys.entity.Person;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -15,4 +17,6 @@ public interface PersonService extends IService<Person> {
 
 
     Person save();
+
+    List<Person> getPersonList();
 }

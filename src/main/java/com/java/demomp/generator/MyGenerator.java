@@ -127,7 +127,7 @@ public class MyGenerator {
         strategy.setRestControllerStyle(true);
       //  strategy.setSuperControllerClass("com.java.demomp.controller.BaseController");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
-        strategy.setSuperEntityColumns("id");
+      //  strategy.setSuperEntityColumns("id");
         strategy.setTablePrefix("t_");  //表前缀
         strategy.setControllerMappingHyphenStyle(true);
       //  strategy.setTablePrefix(pc.getModuleName() + "_");
