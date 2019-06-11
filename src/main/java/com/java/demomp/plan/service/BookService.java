@@ -16,4 +16,8 @@ import java.util.List;
 public interface BookService extends IService<Book> {
 
    List<Book> findAll();
+
+    int deleteBookById(Integer id);
+
+    List<Book> getBookByBookName(String bookName);
 }
