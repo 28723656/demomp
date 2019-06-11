@@ -113,4 +113,20 @@ public class PersonServiceImpl extends ServiceImpl<PersonMapper, Person> impleme
         }
         return false;
     }
+
+    @Override
+    public boolean updateUserById(Person person) {
+
+        // UPDATE t_person SET user_name=?, password=? WHERE id=? AND deleted=0
+      //  boolean b = person.updateById();
+
+        // 把年龄在20-30岁之间的用户的密码加密一下
+        UpdateWrapper<Person> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.between("age",20,30);
+
+        baseMapper.update(person,updateWrapper);
+    //    int update = baseMapper.update(null, queryWrapper);
+
+        return true;
+    }
 }

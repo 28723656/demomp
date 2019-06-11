@@ -59,8 +59,13 @@ public class PersonController {
     }
 
     @GetMapping("/login")
-    public Boolean login(Person person){
+    public boolean login(Person person){
         return personService.login(person);
+    }
+
+    @PutMapping("/update")
+    public boolean update(Person person){
+        return personService.updateUserById(person);
     }
 
 }

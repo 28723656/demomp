@@ -23,4 +23,6 @@ public interface PersonService extends IService<Person> {
     Integer deletePersonList();
 
     Boolean login(Person person);
+
+    boolean updateUserById(Person person);
 }
