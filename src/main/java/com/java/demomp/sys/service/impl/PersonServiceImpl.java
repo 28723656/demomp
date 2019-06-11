@@ -2,16 +2,14 @@ package com.java.demomp.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.java.demomp.sys.entity.Person;
 import com.java.demomp.sys.mapper.PersonMapper;
 import com.java.demomp.sys.service.PersonService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
-import java.sql.Wrapper;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -24,17 +22,15 @@ import java.util.Map;
 @Service
 public class PersonServiceImpl extends ServiceImpl<PersonMapper, Person> implements PersonService {
 
+
     public Person save() {
         Person person = new Person();
         person.setUserName("xia");
-        person.setPassword("oo");
+        String tempPassword = "2872";
+        String salt = "lost丶wind";
+        String password = DigestUtils.md5DigestAsHex((tempPassword+salt).getBytes());
+        person.setPassword(password);
         boolean insert = person.insert();
-
-        QueryWrapper<Person> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id",1);
-        List<Person> people = baseMapper.selectList(queryWrapper);
-        Person person1 = people.get(0);
-        System.out.println(person1);
 
         if(insert){
             System.out.println(person);
@@ -85,12 +81,36 @@ public class PersonServiceImpl extends ServiceImpl<PersonMapper, Person> impleme
 //        queryWrapper.exists("select id from table where age<13");
 
         //12 -----select  只选出几个字段
-        queryWrapper.select("id","user_name","age").lt("age",18);
+      //  queryWrapper.select("id","user_name","age").lt("age",18);
+
+
+
+        queryWrapper.lt("age",18);
 
 
 
         List<Person> people = baseMapper.selectList(queryWrapper);
 
         return people;
+    }
+
+    public Integer deletePersonList() {
+
+        UpdateWrapper<Person> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.lt("age",14);
+        int delete = baseMapper.delete(updateWrapper);
+        return delete;
+    }
+
+    public Boolean login(Person person) {
+        QueryWrapper<Person> queryWrapper = new QueryWrapper<>();
+        String tempPassword = person.getPassword();
+        String salt = "lost丶wind";
+        queryWrapper.eq("user_name",person.getUserName()).eq("password",DigestUtils.md5DigestAsHex((tempPassword+salt).getBytes()));
+        Person person1 = baseMapper.selectOne(queryWrapper);
+        if(person1!=null){
+            return true;
+        }
+        return false;
     }
 }

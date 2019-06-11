@@ -19,4 +19,8 @@ public interface PersonService extends IService<Person> {
     Person save();
 
     List<Person> getPersonList();
+
+    Integer deletePersonList();
+
+    Boolean login(Person person);
 }
