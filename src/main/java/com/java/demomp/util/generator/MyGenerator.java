@@ -1,4 +1,4 @@
-package com.java.demomp.generator;
+package com.java.demomp.util.generator;
 
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
@@ -130,6 +130,7 @@ public class MyGenerator {
       //  strategy.setSuperEntityColumns("id");
         strategy.setTablePrefix("t_");  //表前缀
         strategy.setControllerMappingHyphenStyle(true);
+        strategy.setLogicDeleteFieldName("deleted");  // 设置默认逻辑删除的字段名称
       //  strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());

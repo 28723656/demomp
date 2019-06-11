@@ -1,13 +1,12 @@
-package com.java.demomp.sys.controller;
+package com.java.demomp.plan.controller;
 
 
-import com.java.demomp.sys.entity.Person;
-import com.java.demomp.sys.service.PersonService;
+import com.java.demomp.plan.entity.Person;
+import com.java.demomp.plan.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * <p>

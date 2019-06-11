@@ -1,4 +1,4 @@
-package com.java.demomp.sys.entity;
+package com.java.demomp.plan.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -40,7 +40,7 @@ public class Person extends Model<Person> {
     private Integer age;
 
     @TableLogic
-    private Integer deleted;
+    private Boolean deleted;
 
 
     @Override

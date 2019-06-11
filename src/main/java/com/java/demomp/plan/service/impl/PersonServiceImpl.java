@@ -1,11 +1,11 @@
-package com.java.demomp.sys.service.impl;
+package com.java.demomp.plan.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.java.demomp.sys.entity.Person;
-import com.java.demomp.sys.mapper.PersonMapper;
-import com.java.demomp.sys.service.PersonService;
+import com.java.demomp.plan.entity.Person;
+import com.java.demomp.plan.mapper.PersonMapper;
+import com.java.demomp.plan.service.PersonService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -97,7 +97,7 @@ public class PersonServiceImpl extends ServiceImpl<PersonMapper, Person> impleme
     public Integer deletePersonList() {
 
         UpdateWrapper<Person> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.lt("age",14);
+        updateWrapper.lt("age",18);
         int delete = baseMapper.delete(updateWrapper);
         return delete;
     }

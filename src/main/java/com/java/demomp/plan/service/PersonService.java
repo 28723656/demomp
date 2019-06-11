@@ -1,6 +1,6 @@
-package com.java.demomp.sys.service;
+package com.java.demomp.plan.service;
 
-import com.java.demomp.sys.entity.Person;
+import com.java.demomp.plan.entity.Person;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

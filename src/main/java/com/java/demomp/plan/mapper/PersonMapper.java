@@ -1,6 +1,6 @@
-package com.java.demomp.sys.mapper;
+package com.java.demomp.plan.mapper;
 
-import com.java.demomp.sys.entity.Person;
+import com.java.demomp.plan.entity.Person;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
