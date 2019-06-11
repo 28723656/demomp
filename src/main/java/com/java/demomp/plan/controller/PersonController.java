@@ -3,6 +3,8 @@ package com.java.demomp.plan.controller;
 
 import com.java.demomp.plan.entity.Person;
 import com.java.demomp.plan.service.PersonService;
+import com.java.demomp.util.Result;
+import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,28 +45,35 @@ public class PersonController {
 
     // 添加
     @PostMapping("/save")
-    public Person add(){
-       return  personService.save();
+    public Result add(){
+       return new Result(true, StatusCode.OK,"添加成功", personService.save());
+
     }
 
     @GetMapping("/find")
-    public List<Person> find(){
-        return personService.getPersonList();
+    public Result find(){
+        return new Result(true,StatusCode.OK,"查找结果",personService.getPersonList());
     }
 
     @DeleteMapping("/delete")
-    public Integer delete(){
-        return personService.deletePersonList();
+    public Result delete(){
+        return new Result(true,StatusCode.OK,"删除成功",personService.deletePersonList());
     }
 
     @GetMapping("/login")
-    public boolean login(Person person){
-        return personService.login(person);
+    public Result login(Person person){
+        Boolean login = personService.login(person);
+        if(login){
+            return new Result(true,StatusCode.OK,"登陆成功",personService.login(person));
+        }else{
+            return new Result(false,StatusCode.LOGINERROR,"登陆失败",personService.login(person));
+        }
+
     }
 
     @PutMapping("/update")
-    public boolean update(Person person){
-        return personService.updateUserById(person);
+    public Result update(Person person){
+        return new Result(true,StatusCode.OK,"修改成功",personService.updateUserById(person));
     }
 
 }
