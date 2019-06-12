@@ -1,8 +1,8 @@
 spring:
   datasource:
     username: root
-    password: root
-    url: jdbc:mysql://localhost:3306/test?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&autoReconnect=true
+    password: 48dbe89afa8e5c1acf1c09f5a61328f5
+    url: jdbc:mysql://47.106.187.222:3306/test?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&autoReconnect=true
     driver-class-name: com.mysql.cj.jdbc.Driver
 server:
   port: 80
