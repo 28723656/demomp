@@ -1,12 +1,10 @@
 package com.java.demomp.plan.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,10 +36,17 @@ public class Book extends Model<Book> {
     /**
      * 价格
      */
-    private Integer price;
+    private String price;
 
     @TableLogic
     private Boolean deleted;
+
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
+    private Date createTime;
+
+    @TableField(value = "update_time",fill = FieldFill.UPDATE)
+    private Date updateTime;
+
 
 
     @Override
