@@ -1,6 +1,7 @@
 package com.java.demomp.util.generator;
 
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -58,11 +59,11 @@ public class MyGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/test?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&autoReconnect=true" );
+        dsc.setUrl("jdbc:mysql://47.106.187.222:3306/plan?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&autoReconnect=true" );
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("root");
+        dsc.setPassword("48dbe89afa8e5c1acf1c09f5a61328f5");
         mpg.setDataSource(dsc);
 
         // 包配置
@@ -134,6 +135,13 @@ public class MyGenerator {
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setLogicDeleteFieldName("deleted");  // 设置默认逻辑删除的字段名称
       //  strategy.setTablePrefix(pc.getModuleName() + "_");
+
+        // 设置create_time和update_time
+        List<TableFill> tableFills = new ArrayList<>();
+        tableFills.add(new TableFill("create_time", FieldFill.INSERT));
+        tableFills.add(new TableFill("update_time", FieldFill.INSERT_UPDATE));
+        strategy.setTableFillList(tableFills);
+
 
         mpg.setStrategy(strategy);
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
