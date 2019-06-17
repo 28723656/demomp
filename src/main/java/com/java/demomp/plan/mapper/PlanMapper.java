@@ -1,6 +1,6 @@
 package com.java.demomp.plan.mapper;
 
-import com.java.demomp.plan.entity.Person;
+import com.java.demomp.plan.entity.Plan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,8 +9,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author lost丶wind
- * @since 2019-06-10
+ * @since 2019-06-17
  */
-public interface PersonMapper extends BaseMapper<Person> {
+public interface PlanMapper extends BaseMapper<Plan> {
 
 }
