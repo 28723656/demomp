@@ -27,9 +27,8 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
      * @return
      */
     public Integer addPlan(Plan plan) {
-        int insert = baseMapper.insert(plan);
+       return baseMapper.insert(plan);
 
-        return 1;
     }
 
     public List<Plan> getPlanByType(Integer type) {

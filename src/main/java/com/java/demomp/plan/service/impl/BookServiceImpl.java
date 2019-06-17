@@ -30,7 +30,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     public List<Book> getBookByBookName(String bookName) {
         QueryWrapper<Book> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("book_name",bookName);
+        queryWrapper.and(i->i.like("book_name",bookName)
+                .or().like("book_description",bookName)
+                .or().like("price",bookName));
         List<Book> bookList = baseMapper.selectList(queryWrapper);
         return bookList;
     }

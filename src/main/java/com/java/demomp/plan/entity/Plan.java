@@ -1,23 +1,14 @@
 package com.java.demomp.plan.entity;
 
-import java.math.BigDecimal;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.time.LocalDateTime;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableField;
-
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -54,12 +45,12 @@ public class Plan extends Model<Plan> {
     /**
      * 结束时间
      */
-    private LocalDateTime endTime;
+    private Date endTime;
 
     /**
      * 实际完成时间
      */
-    private LocalDateTime actualTime;
+    private Date actualTime;
 
     /**
      * 等级D->S
@@ -92,10 +83,10 @@ public class Plan extends Model<Plan> {
     private Boolean deleted;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
 
     @Override
