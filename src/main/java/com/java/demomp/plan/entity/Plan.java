@@ -45,7 +45,7 @@ public class Plan extends Model<Plan> {
     /**
      * 结束时间
      */
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /**
      * 实际完成时间
@@ -83,10 +83,10 @@ public class Plan extends Model<Plan> {
     private Boolean deleted;
 
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
 
     @Override

@@ -8,6 +8,11 @@ import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  *  前端控制器
@@ -31,6 +36,7 @@ public class PlanController {
     public Result addPlan(@RequestBody Plan plan){
         plan.setPercent(0.00);
         Integer integer = planService.addPlan(plan);
+        System.out.println("---------------------"+new Date()+"----------------");
         if(integer == 1){
             return new Result(true, StatusCode.OK,"添加成功");
         }else {
@@ -39,9 +45,30 @@ public class PlanController {
 
     }
 
+    /**
+     * 通过类型返回计划
+     * @param type
+     * @return
+     */
     @GetMapping("/{type}")
     public Result getPlanByType(@PathVariable Integer type){
       return new Result(true,StatusCode.OK,"查询成功",planService.getPlanByType(type));
     }
+
+
+    /**
+     * 获取所有的计划
+     * @return
+     */
+    @GetMapping
+    public Result getPlan(){
+        Map<String,List<Plan>> map = new HashMap<>();
+        map.put("todayPlan",planService.getPlanByType(1));
+        map.put("weekPlan",planService.getPlanByType(2));
+        map.put("monthPlan",planService.getPlanByType(3));
+        map.put("yearPlan",planService.getPlanByType(4));
+        return new Result(true,StatusCode.OK,"查询成功",map);
+    }
+
 
 }
