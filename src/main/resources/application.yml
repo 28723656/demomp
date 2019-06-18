@@ -2,7 +2,7 @@ spring:
   datasource:
     username: root
     password: 48dbe89afa8e5c1acf1c09f5a61328f5
-    url: jdbc:mysql://47.106.187.222:3306/plan?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&autoReconnect=true
+    url: jdbc:mysql://47.106.187.222:3306/plan?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
     driver-class-name: com.mysql.cj.jdbc.Driver
 server:
   port: 80
@@ -11,3 +11,5 @@ server:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+

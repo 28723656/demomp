@@ -8,6 +8,7 @@ import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public class PlanController {
         plan.setPercent(0.00);
         Integer integer = planService.addPlan(plan);
         System.out.println("---------------------"+new Date()+"----------------");
+        System.out.println("---------------------"+ LocalDateTime.now() +"----------------");
         if(integer == 1){
             return new Result(true, StatusCode.OK,"添加成功");
         }else {
