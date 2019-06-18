@@ -18,4 +18,6 @@ public interface PlanService extends IService<Plan> {
     Integer addPlan(Plan plan);
 
     List<Plan> getPlanByType(Integer type);
+
+    Integer updatePlanFinishedById(Plan id);
 }

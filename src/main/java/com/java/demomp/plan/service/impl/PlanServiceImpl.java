@@ -1,6 +1,7 @@
 package com.java.demomp.plan.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.java.demomp.plan.entity.Plan;
 import com.java.demomp.plan.mapper.PlanMapper;
 import com.java.demomp.plan.service.PlanService;
@@ -32,6 +33,11 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
     }
 
     public List<Plan> getPlanByType(Integer type) {
-        return baseMapper.selectList(new QueryWrapper<Plan>().eq("type",type));
+        return baseMapper.selectList(new QueryWrapper<Plan>().eq("type",type).orderByDesc("top",    "rank"));
+    }
+
+    public Integer updatePlanFinishedById(Plan plan) {
+        int finished = plan.getFinished() == 1?0:1;
+        return baseMapper.update(new Plan().setFinished(finished), new UpdateWrapper<Plan>().eq("id", plan.getId()));
     }
 }
