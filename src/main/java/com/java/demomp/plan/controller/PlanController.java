@@ -71,6 +71,11 @@ public class PlanController {
     }
 
 
+    /**
+     * 改变日计划的完成状态
+     * @param plan
+     * @return
+     */
     @PutMapping
     public Result updatePlanFinishedById(@RequestBody Plan plan){
        return new Result(true,StatusCode.OK,"更新成功", planService.updatePlanFinishedById(plan));
