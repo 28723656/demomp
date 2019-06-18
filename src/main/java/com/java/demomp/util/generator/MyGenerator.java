@@ -131,7 +131,7 @@ public class MyGenerator {
       //  strategy.setSuperControllerClass("com.java.demomp.controller.BaseController");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
       //  strategy.setSuperEntityColumns("id");
-        strategy.setTablePrefix("t_");  //表前缀
+        strategy.setTablePrefix("util_");  //表前缀
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setLogicDeleteFieldName("deleted");  // 设置默认逻辑删除的字段名称
       //  strategy.setTablePrefix(pc.getModuleName() + "_");

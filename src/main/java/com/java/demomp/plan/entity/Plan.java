@@ -88,6 +88,11 @@ public class Plan extends Model<Plan> {
     private Integer parentId;
 
     /**
+     * 如果真爱有颜色
+     */
+    private String color;
+
+    /**
      * 逻辑删除
      */
     @TableLogic

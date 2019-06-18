@@ -2,14 +2,21 @@ package com.java.demomp.plan.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.java.demomp.plan.entity.Dict;
+import com.java.demomp.plan.entity.DictParent;
 import com.java.demomp.plan.entity.Plan;
 import com.java.demomp.plan.mapper.PlanMapper;
+import com.java.demomp.plan.service.DictParentService;
+import com.java.demomp.plan.service.DictService;
 import com.java.demomp.plan.service.PlanService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -24,6 +31,12 @@ import java.util.List;
 public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements PlanService {
 
 
+    @Autowired
+    DictParentService dictParentService;
+
+    @Autowired
+    DictService dictService;
+
     /**
      * 添加计划
      *
@@ -32,6 +45,54 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
      */
     public Integer addPlan(Plan plan) {
         // 1.正常的添加
+        // 临时添加，查找父类，添加一个和父类一样的颜色
+        // 如果是最大的父类，就直接给他添加一个颜色，如果是子类，就用父类的颜色
+        if (plan.getParentId() == null) {
+            // 表示是最大的父类
+            // 获取所有的颜色列表
+            DictParent dictParent = dictParentService.getOne(new QueryWrapper<DictParent>().eq("code", "color"));
+            List<Dict> dictList = new ArrayList<>();
+
+            if (dictParent != null) {
+                // 1 2 3 4 6
+                dictList = dictService.getBaseMapper().selectList(new QueryWrapper<Dict>().eq("parent_id", dictParent.getId()));
+            }
+
+            // 获取已选颜色列表,父类的列表
+            List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("type", 4));
+            // 获取所有有颜色的父类列表
+            List<String> colorList = new ArrayList<>();
+            for (int i = 0; i < planList.size(); i++) {
+                // 1 2 3
+                String color = planList.get(i).getColor();
+                if (color != null) {
+                    colorList.add(color);
+                }
+            }
+            // 如果还没有填写任何颜色
+            //找出一个不同的颜色
+            for (int i = 0; i < dictList.size(); i++) {
+                String resultColor = dictList.get(i).getName();
+                // 如果年计划中没有颜色，就选中了第一个
+                if(colorList.size() == 0){
+                    plan.setColor(resultColor);
+                    break;
+                }else {
+                    // 年计划中有了颜色
+                    if (!colorList.contains(resultColor)) {
+                        plan.setColor(resultColor);
+                        break;
+                    }
+                }
+
+            }
+
+        } else {
+            // 如果有父亲，就用父亲的颜色
+            Plan parentPlan = baseMapper.selectById(plan.getParentId());
+            plan.setColor(parentPlan.getColor());
+        }
+
         int insert = baseMapper.insert(plan);
         // 2.改变父类的百分比
         // 1.日  -> 周、月、年
