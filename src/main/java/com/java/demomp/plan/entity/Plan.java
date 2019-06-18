@@ -57,7 +57,15 @@ public class Plan extends Model<Plan> {
      */
     private Integer rank;
 
+    /**
+     * 百分比
+     */
     private Double percent;
+
+    /**
+     * 是否已经完成
+     */
+    private Integer finished;
 
     /**
      * 得分
@@ -74,6 +82,9 @@ public class Plan extends Model<Plan> {
      */
     private Integer type;
 
+    /**
+     * 父id
+     */
     private Integer parentId;
 
     /**
