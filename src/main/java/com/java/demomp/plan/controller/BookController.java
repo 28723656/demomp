@@ -31,7 +31,6 @@ public class BookController {
      */
     @GetMapping()
     public Result getAllBook(){
-
         return new Result(true, StatusCode.OK,"查询成功",bookService.findAll());
     }
 

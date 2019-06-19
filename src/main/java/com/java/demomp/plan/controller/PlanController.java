@@ -81,4 +81,13 @@ public class PlanController {
        return new Result(true,StatusCode.OK,"更新成功", planService.updatePlanFinishedById(plan));
     }
 
+    /**
+     * 修改计划
+     */
+
+    @PutMapping
+    public Result updatePlan(@RequestBody Plan plan){
+      return   new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan));
+    }
+
 }

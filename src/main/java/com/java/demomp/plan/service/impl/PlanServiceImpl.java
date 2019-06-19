@@ -74,10 +74,10 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             for (int i = 0; i < dictList.size(); i++) {
                 String resultColor = dictList.get(i).getName();
                 // 如果年计划中没有颜色，就选中了第一个
-                if(colorList.size() == 0){
+                if (colorList.size() == 0) {
                     plan.setColor(resultColor);
                     break;
-                }else {
+                } else {
                     // 年计划中有了颜色
                     if (!colorList.contains(resultColor)) {
                         plan.setColor(resultColor);
@@ -132,6 +132,38 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         return updateNum;
     }
 
+    // 更新计划
+    public Integer updatePlan(Plan plan) {
+        // 二话不说，先找出新的父类
+        Integer newParentId = plan.getParentId();
+        Integer beforeParentId = plan.selectById().getParentId();
+
+        // 如果是年计划,直接更新就行了
+        if (newParentId == null) {
+            baseMapper.updateById(plan);
+        } else {
+            //  大前提：如果不是年计划
+            //  如果没变改变parentId
+            if (newParentId == beforeParentId) {
+                baseMapper.updateById(plan);
+            } else {
+                // 如果改变了父类
+                baseMapper.updateById(plan);
+                // 1.更新之前的进度（就是相当于我删了这个parentId）
+                while (beforeParentId != null) {
+                    beforeParentId = updateFatherByParentId(beforeParentId);
+                }
+                //  2.更新新的父类的进度
+                while (newParentId != null) {
+                    newParentId = updateFatherByParentId(newParentId);
+                }
+
+            }
+        }
+
+        return 1;
+    }
+
 
     /**
      * 传入父id
@@ -151,4 +183,6 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         baseMapper.update(new Plan().setPercent(percent), new QueryWrapper<Plan>().eq("id", parentId));
         return plan.getParentId();
     }
+
+
 }
