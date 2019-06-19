@@ -8,8 +8,6 @@ import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +83,7 @@ public class PlanController {
      * 修改计划
      */
 
-    @PutMapping
+    @PutMapping("/update")
     public Result updatePlan(@RequestBody Plan plan){
       return   new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan));
     }

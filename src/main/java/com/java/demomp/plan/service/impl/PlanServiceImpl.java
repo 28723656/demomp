@@ -139,6 +139,8 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         Integer beforeParentId = plan.selectById().getParentId();
 
         // 二话不说，先更新
+        // 先更新新父亲的颜色
+        plan.setColor(plan.selectById(newParentId).getColor());
         baseMapper.updateById(plan);
         // 如果有父类，并且我也更新了父类
         if (newParentId != null && newParentId != beforeParentId) {
@@ -168,10 +170,16 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         // 1.通过父id获取父亲实体
         Plan plan = baseMapper.selectById(parentId);
         // 2.通过父节点获取完成的数量和总数量
+        // 如果修改后，那个节点下没有儿子了,就要把那个父节点的百分比设置为0
         Integer countTotal = baseMapper.selectCount(new QueryWrapper<Plan>().eq("parent_id", parentId));
         Double percentFinished = baseMapper.selectSumPercent(parentId); // 选出百分比
         // 3.更新父亲百分比
-        Double percent = percentFinished * 1.00 / countTotal;
+        Double percent = 0.00;
+        if (countTotal == 0) {
+            percent = 0.00;
+        } else {
+            percent = percentFinished * 1.00 / countTotal;
+        }
         baseMapper.update(new Plan().setPercent(percent), new QueryWrapper<Plan>().eq("id", parentId));
         return plan.getParentId();
     }
