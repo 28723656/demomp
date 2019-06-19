@@ -138,26 +138,18 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         Integer newParentId = plan.getParentId();
         Integer beforeParentId = plan.selectById().getParentId();
 
-        // 如果是年计划,直接更新就行了
-        if (newParentId == null) {
-            baseMapper.updateById(plan);
-        } else {
-            //  大前提：如果不是年计划
-            //  如果没变改变parentId
-            if (newParentId == beforeParentId) {
-                baseMapper.updateById(plan);
-            } else {
-                // 如果改变了父类
-                baseMapper.updateById(plan);
-                // 1.更新之前的进度（就是相当于我删了这个parentId）
-                while (beforeParentId != null) {
-                    beforeParentId = updateFatherByParentId(beforeParentId);
-                }
-                //  2.更新新的父类的进度
-                while (newParentId != null) {
-                    newParentId = updateFatherByParentId(newParentId);
-                }
-
+        // 二话不说，先更新
+        baseMapper.updateById(plan);
+        // 如果有父类，并且我也更新了父类
+        if (newParentId != null && newParentId != beforeParentId) {
+            // 如果改变了父类
+            // 1.更新原来的父类进度（其实相当于删除了）
+            while (beforeParentId != null) {
+                beforeParentId = updateFatherByParentId(beforeParentId);
+            }
+            //  2.更新新的父类的进度
+            while (newParentId != null) {
+                newParentId = updateFatherByParentId(newParentId);
             }
         }
 
