@@ -15,6 +15,6 @@ import org.apache.ibatis.annotations.Select;
 public interface PlanMapper extends BaseMapper<Plan> {
 
     // 通过父id统计百分比总数
-    @Select("select sum(percent) from t_plan where parent_id =#{weekPlanParentId} ")
+    @Select("select sum(percent) from t_plan where parent_id =#{weekPlanParentId} and deleted=0 ")
     Double selectSumPercent(Integer weekPlanParentId);
 }

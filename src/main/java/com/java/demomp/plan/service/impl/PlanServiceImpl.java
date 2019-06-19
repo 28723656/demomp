@@ -158,6 +158,20 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         return 1;
     }
 
+    // 通过id删除
+    public Integer deletePlanById(Integer id) {
+        // 首先获得父id
+        Integer parentId = baseMapper.selectById(id).getParentId();
+
+        // 二话不说，先删了再说
+        int i = baseMapper.deleteById(id);
+        while (parentId != null){
+            parentId = updateFatherByParentId(parentId);
+        }
+
+        return i;
+    }
+
 
     /**
      * 传入父id

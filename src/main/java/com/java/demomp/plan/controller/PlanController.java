@@ -88,4 +88,10 @@ public class PlanController {
       return   new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan));
     }
 
+
+    @DeleteMapping("{id}")
+    public  Result deleteById(@PathVariable Integer id){
+        return new Result(true,StatusCode.OK,"删除成功",planService.deletePlanById(id));
+    }
+
 }
