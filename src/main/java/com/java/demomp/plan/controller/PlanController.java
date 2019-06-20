@@ -8,6 +8,7 @@ import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,6 @@ public class PlanController {
 
     @GetMapping("/tree")
     public Result getTreeData(){
-        return new Result(true,StatusCode.OK,"查询成功",planService.getTreeData(null));
     }
 
 }

@@ -25,5 +25,4 @@ public interface PlanService extends IService<Plan> {
 
     Integer deletePlanById(Integer id);
 
-    List<Plan> getTreeData(Integer id);
 }
