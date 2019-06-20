@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Map;
 
 /**
  * <p>
@@ -171,6 +171,26 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
         return i;
     }
+
+    List<Object> listTree = new ArrayList<>();
+    //获得树状图
+    public List<Plan> getTreeData(Integer id) {
+
+        //首先找到父id
+    //    Map<String,Object> map =baseMapper.getTreeDataByParentId(null);
+
+        List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("parentId", id));
+        if(planList != null && planList.size() >0){
+            for(int i=0;i<planList.size();i++){
+                Plan plan = planList.get(i);
+                listTree.add(plan);
+                getTreeData(plan.getParentId());
+            }
+        }
+
+    }
+
+
 
 
     /**
