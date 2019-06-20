@@ -174,7 +174,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     List<Object> listTree = new ArrayList<>();
     //获得树状图
-    public List<Plan> getTreeData(Integer id) {
+    public List<Plan> getTreeData(Integer id,List<Object> listTree) {
 
         //首先找到父id
     //    Map<String,Object> map =baseMapper.getTreeDataByParentId(null);
@@ -184,7 +184,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             for(int i=0;i<planList.size();i++){
                 Plan plan = planList.get(i);
                 listTree.add(plan);
-                getTreeData(plan.getParentId());
+                getTreeData(plan.getParentId(),listTree);
             }
         }
 
