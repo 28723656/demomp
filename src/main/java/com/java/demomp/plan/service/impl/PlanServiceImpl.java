@@ -173,37 +173,49 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         return i;
     }
 
+    // 用于controller的方法，获得树()
+    public List<Object> getTreeList(Integer parentId){
+        return getTreeListMethod(parentId, baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", parentId)));
+    }
 
-    public List<Object> getTreeDatad(Integer parentId) {
+    // 获得树    首先传入要找的父节点   和通过这个parentId查找到的list
+    public  List<Object> getTreeListMethod(Integer parentId,List<Plan> listPlan) {
 
-
-        List<Object> list = new ArrayList<>();
-        // 找到所有的父亲
-        List<Plan> fatherList = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", parentId));
-
-        // 对每一个父亲进行递归
-        if(fatherList == null || fatherList.size() == 0 ){
-            // 如果为空，就表示已经是一个最子节点了
-            Plan plan = baseMapper.selectById(parentId);
-            Map<String,Object> map = new HashMap<>();
-            map.put("id",plan.getId());
-            map.put("name",plan.getName());
-            list.add(map);
-        }
-        else {
-            // 如果下面有好多好多儿子
-
-            for(int i = 0;i<fatherList.size();i++){
+        List<Object > totalList = new ArrayList<>();
+        if(listPlan != null && listPlan.size()> 0){
+            // 对每一个父亲
+            for(int i=0;i<listPlan.size();i++){
+                Plan plan = listPlan.get(i);
+                // 父亲还是实体
                 Map<String,Object> map = new HashMap<>();
-                Plan tempPlan = new Plan();
-                map.put("id",tempPlan.getId());
-                map.put("name",tempPlan.getName());
+                map.put("key",plan.getId());
+                map.put("title",plan.getName());
+                // 如果有儿子
+                List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", plan.getId()));
+                if(children!= null && children.size()>0){
+                    List<Object> list = getTreeListMethod(plan.getId(),children);
+                    map.put("children",list);
+                }
+                totalList.add(map);
             }
         }
 
+       return totalList;
 
-        return null;
     }
+
+// 传入要递归的集合，和父节点
+//    private List<Map<String, Object>> getLevelData(List<Map<String, Object>> dbList, Integer parentcode) {
+//        List<Map<String, Object>> resultList = new ArrayList<>();
+//        for (Map<String, Object> data : dbList) {
+//            if (data.get("parentcode") == parentcode) {
+//                List<Map<String, Object>> childList = getLevelData(dbList, (Integer)data.get("code"));
+//                data.put("children", childList);
+//                resultList.add(data);
+//            }
+//        }
+//        return resultList;
+//    }
 
 
     public void test(){

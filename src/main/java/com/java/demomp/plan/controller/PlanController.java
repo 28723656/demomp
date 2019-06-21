@@ -95,8 +95,9 @@ public class PlanController {
         return new Result(true,StatusCode.OK,"删除成功",planService.deletePlanById(id));
     }
 
-    @GetMapping("/tree")
-    public Result getTreeData(){
+    @GetMapping("/tree/{parentId}")
+    public Result getTreeList(@PathVariable  Integer parentId){
+        return new Result(true,StatusCode.OK,"查询树成功",planService.getTreeList(parentId));
     }
 
 }
