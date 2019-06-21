@@ -193,13 +193,18 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     // 通过id删除
     public Integer deletePlanById(Integer id) {
+
+        if(id == 118 || id == 119 || id == 120){
+            return 0;
+        }
+
         // 首先获得父id
         Integer parentId = baseMapper.selectById(id).getParentId();
 
         // 二话不说，先删了再说(刀下留人，如果删了父亲节点，儿子没归宿了)
-        // 所以要先获得孩子节点，如果没有孩子节点才能删除
+        // 所以要先获得孩子节点，有孩子，不能删除
         List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", id));
-        if(children == null || children.size() == 0){
+        if(children != null  && children.size() > 0){
             return 0;
         }
         // 确保没有孩子才能删除
