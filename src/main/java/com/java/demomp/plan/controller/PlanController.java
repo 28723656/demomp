@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author lost丶wind
@@ -30,54 +30,72 @@ public class PlanController {
 
     /**
      * 添加计划
+     *
      * @return
      */
     @PostMapping()
-    public Result addPlan(@RequestBody Plan plan){
+    public Result addPlan(@RequestBody Plan plan) {
         plan.setPercent(0.00);
         Integer integer = planService.addPlan(plan);
-        if(integer == 1){
-            return new Result(true, StatusCode.OK,"添加成功");
-        }else {
-            return new Result(false, StatusCode.ERROR,"添加失败");
+        if (integer == 1) {
+            return new Result(true, StatusCode.OK, "添加成功");
+        } else {
+            return new Result(false, StatusCode.ERROR, "添加失败");
         }
 
     }
 
     /**
      * 通过类型返回计划
+     *
      * @param type
      * @return
      */
     @GetMapping("/{type}")
-    public Result getPlanByType(@PathVariable Integer type){
-      return new Result(true,StatusCode.OK,"查询成功",planService.getPlanByType(type));
+    public Result getPlanByType(@PathVariable Integer type) {
+
+        List<Plan> planList = planService.getPlanByType(type);
+        if (planList != null && planList.size() > 0) {
+            return new Result(true, StatusCode.OK, "查询成功", planList);
+        } else {
+            return new Result(false, StatusCode.NODATA, "没有数据");
+        }
+
+
     }
 
 
     /**
      * 获取所有的计划
+     *
      * @return
      */
     @GetMapping
-    public Result getPlan(){
-        Map<String,List<Plan>> map = new HashMap<>();
-        map.put("todayPlan",planService.getPlanByType(1));
-        map.put("weekPlan",planService.getPlanByType(2));
-        map.put("monthPlan",planService.getPlanByType(3));
-        map.put("yearPlan",planService.getPlanByType(4));
-        return new Result(true,StatusCode.OK,"查询成功",map);
+    public Result getPlan() {
+        Map<String, List<Plan>> map = new HashMap<>();
+        map.put("todayPlan", planService.getPlanByType(1));
+        map.put("weekPlan", planService.getPlanByType(2));
+        map.put("monthPlan", planService.getPlanByType(3));
+        map.put("yearPlan", planService.getPlanByType(4));
+        return new Result(true, StatusCode.OK, "查询成功", map);
     }
 
 
     /**
      * 改变日计划的完成状态
+     *
      * @param plan
      * @return
      */
     @PutMapping
-    public Result updatePlanFinishedById(@RequestBody Plan plan){
-       return new Result(true,StatusCode.OK,"更新成功", planService.updatePlanFinishedById(plan));
+    public Result updatePlanFinishedById(@RequestBody Plan plan) {
+        Integer updateNum = planService.updatePlanFinishedById(plan);
+        if (updateNum > 0) {
+            return new Result(true, StatusCode.OK, "修改成功");
+        } else {
+            return new Result(false, StatusCode.ERROR, "修改失败");
+        }
+
     }
 
     /**
@@ -85,30 +103,48 @@ public class PlanController {
      */
 
     @PutMapping("/update")
-    public Result updatePlan(@RequestBody Plan plan){
-      return   new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan));
+    public Result updatePlan(@RequestBody Plan plan) {
+        Integer updateNum = planService.updatePlan(plan);
+        if (updateNum > 0) {
+            return new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan));
+        } else {
+            return new Result(false, StatusCode.ERROR, "修改失败");
+        }
     }
 
 
     /**
      * 删除计划   非最子节点删除的问题未解决
+     *
      * @param id
      * @return
      */
     @DeleteMapping("{id}")
-    public  Result deleteById(@PathVariable Integer id){
-        return new Result(true,StatusCode.OK,"删除成功",planService.deletePlanById(id));
+    public Result deleteById(@PathVariable Integer id) {
+        Integer deleteNum = planService.deletePlanById(id);
+        if (deleteNum > 0) {
+            return new Result(true, StatusCode.OK, "删除成功");
+        } else {
+            return new Result(false, StatusCode.ERROR, "删除失败，或是有子节点");
+        }
     }
 
     /**
      * 通过父节点获取树列表   默认最大的父节点为-1
+     *
      * @param parentId
      * @return
      */
     @GetMapping("/tree/{parentId}")
-    public Result getTreeList(@PathVariable  Integer parentId){
-       parentId = parentId == -1?null:parentId;
-        return new Result(true,StatusCode.OK,"查询树成功",planService.getTreeList(parentId));
+    public Result getTreeList(@PathVariable Integer parentId) {
+        parentId = parentId == -1 ? null : parentId;
+        List<Object> treeList = planService.getTreeList(parentId);
+        if(treeList != null && treeList.size() > 0){
+            return new Result(true, StatusCode.OK, "查询树成功", planService.getTreeList(parentId));
+        }else{
+            return new Result(false, StatusCode.ERROR, "没有数据或查询错误");
+        }
+
     }
 
 
@@ -116,12 +152,12 @@ public class PlanController {
      * 获得树的List
      */
     @GetMapping("/tree")
-    public Result getTreeList(){
+    public Result getTreeList() {
         List<Object> treeList = planService.getTreeList();
-        if(treeList != null && treeList.size() > 0){
-            return new Result(true,StatusCode.OK,"查询树成功",treeList);
-        }else{
-            return new Result(false,StatusCode.ERROR,"没有树");
+        if (treeList != null && treeList.size() > 0) {
+            return new Result(true, StatusCode.OK, "查询树成功", treeList);
+        } else {
+            return new Result(false, StatusCode.ERROR, "没有树");
         }
 
     }
