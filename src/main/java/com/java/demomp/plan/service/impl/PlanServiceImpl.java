@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -100,6 +101,10 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         }
 
         int insert = baseMapper.insert(plan);
+
+        // 删除redis
+        handleRedis();
+
         // 2.改变父类的百分比
         // 1.日  -> 周、月、年
 
@@ -112,8 +117,30 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     }
 
+    // 暂时没有service调用
     public List<Plan> getPlanByType(Integer type) {
         return baseMapper.selectList(new QueryWrapper<Plan>().eq("type", type).orderByDesc("top", "rank"));
+    }
+
+    // 获得分组Plan
+    public Map<String, List<Plan>> getGroupPlan() {
+
+        // 处理redis
+
+        if(redisTemplate.opsForValue().get("groupPlanList") == null){
+            Map<String, List<Plan>> map = new HashMap<>();
+            map.put("todayPlan",getPlanByType(1));
+            map.put("weekPlan", getPlanByType(2));
+            map.put("monthPlan", getPlanByType(3));
+            map.put("yearPlan", getPlanByType(4));
+            redisTemplate.opsForValue().set("groupPlanList",map);
+            return map;
+        }else {
+            return (Map<String, List<Plan>>) redisTemplate.opsForValue().get("groupPlanList");
+        }
+        // 结束处理redis
+
+
     }
 
     public Integer updatePlanFinishedById(Plan plan) {
@@ -127,14 +154,10 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         while (parentId != null) {
             parentId = updateFatherByParentId(parentId);
         }
-        /*
-        // 2、更新周计划
-        Integer weekParentId = updateFatherByParentId(plan.getParentId());
-        // 3、更新月计划
-        Integer monthParentId = updateFatherByParentId(weekParentId);
-        // 4、更新年计划
-        updateFatherByParentId(monthParentId);
-        */
+
+        // 删除redis
+        handleRedis();
+
         return updateNum;
     }
 
@@ -147,7 +170,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         // 二话不说，先更新
         // 先更新新父亲的颜色
         plan.setColor(plan.selectById(newParentId).getColor());
-        baseMapper.updateById(plan);
+        int i = baseMapper.updateById(plan);
         // 如果有父类，并且我也更新了父类
         if (newParentId != null && newParentId != beforeParentId) {
             // 如果改变了父类
@@ -161,7 +184,11 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             }
         }
 
-        return 1;
+        // 删除redis
+        handleRedis();
+
+
+        return i;
     }
 
     // 通过id删除
@@ -180,6 +207,9 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         while (parentId != null) {
             parentId = updateFatherByParentId(parentId);
         }
+
+        // 删除redis
+        handleRedis();
 
         return i;
     }
@@ -298,5 +328,16 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         return plan.getParentId();
     }
 
+
+    /**
+     * 懒处理，当有增删改的时候，直接删除redis
+     */
+    public  void handleRedis(){
+        // --------处理redis  懒处理,直接删除----------
+        redisTemplate.delete("treeListAll");
+        redisTemplate.delete("treeList");
+        redisTemplate.delete("groupPlanList");
+        //--------结束redis处理---------
+    }
 
 }

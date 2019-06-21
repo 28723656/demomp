@@ -72,12 +72,7 @@ public class PlanController {
      */
     @GetMapping
     public Result getPlan() {
-        Map<String, List<Plan>> map = new HashMap<>();
-        map.put("todayPlan", planService.getPlanByType(1));
-        map.put("weekPlan", planService.getPlanByType(2));
-        map.put("monthPlan", planService.getPlanByType(3));
-        map.put("yearPlan", planService.getPlanByType(4));
-        return new Result(true, StatusCode.OK, "查询成功", map);
+        return new Result(true, StatusCode.OK, "查询成功", planService.getGroupPlan());
     }
 
 
