@@ -27,4 +27,5 @@ public interface PlanService extends IService<Plan> {
 
      List<Object> getTreeList(Integer parentId);
 
+    List<Object> getTreeList();
 }

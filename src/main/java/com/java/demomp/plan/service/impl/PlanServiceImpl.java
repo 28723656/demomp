@@ -173,10 +173,33 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         return i;
     }
 
+    // 获得树列表，所有的
+    public List<Object> getTreeList() {
+        List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>());
+        List<Object> objectList = new ArrayList<>();
+        if(planList != null && planList.size() >0 ){
+            for(int i=0;i<planList.size();i++){
+                Plan plan = planList.get(i);
+                Map<String ,Object> map = new HashMap<>();
+                map.put("key",plan.getId()+"");
+                map.put("title",plan.getName());
+                objectList.add(map);
+            }
+        }
+        return objectList;
+    }
+
     // 用于controller的方法，获得树()
     public List<Object> getTreeList(Integer parentId){
-        return getTreeListMethod(parentId, baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", parentId)));
+        QueryWrapper<Plan> query = new QueryWrapper<>();
+        if(parentId == null){
+           query = new QueryWrapper<Plan>().isNull("parent_id");
+        }else{
+            query = new QueryWrapper<Plan>().eq("parent_id",parentId);
+        }
+        return getTreeListMethod(parentId, baseMapper.selectList(query));
     }
+
 
     // 获得树    首先传入要找的父节点   和通过这个parentId查找到的list
     public  List<Object> getTreeListMethod(Integer parentId,List<Plan> listPlan) {
@@ -188,8 +211,11 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                 Plan plan = listPlan.get(i);
                 // 父亲还是实体
                 Map<String,Object> map = new HashMap<>();
-                map.put("key",plan.getId());
+                map.put("key",plan.getId()+"");
                 map.put("title",plan.getName());
+                // 下面2个是非必要属性
+                map.put("color",plan.getColor());
+                map.put("percent",plan.getPercent());
                 // 如果有儿子
                 List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", plan.getId()));
                 if(children!= null && children.size()>0){

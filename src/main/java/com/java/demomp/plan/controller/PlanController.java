@@ -90,14 +90,41 @@ public class PlanController {
     }
 
 
+    /**
+     * 删除计划   非最子节点删除的问题未解决
+     * @param id
+     * @return
+     */
     @DeleteMapping("{id}")
     public  Result deleteById(@PathVariable Integer id){
         return new Result(true,StatusCode.OK,"删除成功",planService.deletePlanById(id));
     }
 
+    /**
+     * 通过父节点获取树列表   默认最大的父节点为-1
+     * @param parentId
+     * @return
+     */
     @GetMapping("/tree/{parentId}")
     public Result getTreeList(@PathVariable  Integer parentId){
+       parentId = parentId == -1?null:parentId;
         return new Result(true,StatusCode.OK,"查询树成功",planService.getTreeList(parentId));
     }
+
+
+    /**
+     * 获得树的List
+     */
+    @GetMapping("/tree")
+    public Result getTreeList(){
+        List<Object> treeList = planService.getTreeList();
+        if(treeList != null && treeList.size() > 0){
+            return new Result(true,StatusCode.OK,"查询树成功",treeList);
+        }else{
+            return new Result(false,StatusCode.ERROR,"没有树");
+        }
+
+    }
+
 
 }
