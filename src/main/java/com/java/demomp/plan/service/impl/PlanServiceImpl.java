@@ -12,6 +12,7 @@ import com.java.demomp.plan.service.PlanService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.java.demomp.util.PlanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,9 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     @Autowired
     DictService dictService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 添加计划
@@ -182,18 +186,24 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     // 获得树列表，所有的
     public List<Object> getTreeList() {
-        List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>());
-        List<Object> objectList = new ArrayList<>();
-        if(planList != null && planList.size() >0 ){
-            for(int i=0;i<planList.size();i++){
-                Plan plan = planList.get(i);
-                Map<String ,Object> map = new HashMap<>();
-                map.put("key",plan.getId()+"");
-                map.put("title",plan.getName());
-                objectList.add(map);
+
+        if(redisTemplate.opsForValue().get("treeListAll") == null){
+            List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>());
+            List<Object> objectList = new ArrayList<>();
+            if(planList != null && planList.size() >0 ){
+                for(int i=0;i<planList.size();i++){
+                    Plan plan = planList.get(i);
+                    Map<String ,Object> map = new HashMap<>();
+                    map.put("key",plan.getId()+"");
+                    map.put("title",plan.getName());
+                    objectList.add(map);
+                }
             }
+            redisTemplate.opsForValue().set("treeListAll",objectList);
+            return objectList;
+        }else {
+          return (List<Object>) redisTemplate.opsForValue().get("treeListAll");
         }
-        return objectList;
     }
 
     // 用于controller的方法，获得树()
@@ -204,7 +214,17 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         }else{
             query = new QueryWrapper<Plan>().eq("parent_id",parentId);
         }
-        return getTreeListMethod(parentId, baseMapper.selectList(query));
+
+        Object redisTreeList = redisTemplate.opsForValue().get("treeList");
+        if(redisTreeList == null){
+            List<Object> treeList = getTreeListMethod(parentId, baseMapper.selectList(query));
+            redisTemplate.opsForValue().set("treeList",treeList);
+            return treeList;
+        }else {
+            List<Object> treeList = (List<Object>) redisTemplate.opsForValue().get("treeList");
+            return treeList;
+        }
+
     }
 
 
