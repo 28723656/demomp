@@ -167,9 +167,11 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         Integer newParentId = plan.getParentId();
         Integer beforeParentId = plan.selectById().getParentId();
 
-        // 二话不说，先更新
-        // 先更新新父亲的颜色
-        plan.setColor(plan.selectById(newParentId).getColor());
+        //  通过parentId找到他的父亲   1.如果有父亲，就把颜色设置成父亲的颜色   ，如果自己就是最大的父亲，日常更新就行了
+        Plan parentEntity = plan.selectById(newParentId);
+        if(parentEntity!=null){
+            plan.setColor(plan.selectById(newParentId).getColor());
+        }
         int i = baseMapper.updateById(plan);
         // 如果有父类，并且我也更新了父类
         if (newParentId != null && newParentId != beforeParentId) {
