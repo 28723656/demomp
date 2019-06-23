@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.java.demomp.plan.mapper")
+@MapperScan("com.java.demomp.*.mapper")
 public class DemompApplication {
 
     public static void main(String[] args) {
