@@ -19,4 +19,10 @@ public interface RoleService extends IService<Role> {
     List<RoleMenuVO> getRoleList();
 
     List<Role> getRoles();
+
+    Integer addRole(RoleMenuVO roleMenuVO);
+
+    Integer updateRole(RoleMenuVO roleMenuVO);
+
+    Integer deleteRole(Integer id);
 }

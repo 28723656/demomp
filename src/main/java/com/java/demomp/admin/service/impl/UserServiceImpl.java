@@ -66,12 +66,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     public Integer updateUser(UserRoleVO userRoleVO) {
 
+        //在更新之前获取到role_id
+        Integer beforeRoleId = new UserRole().selectOne(new QueryWrapper<UserRole>().eq("user_id",userRoleVO.getId())).getRoleId();
+
         // 修改t_user表中的信息
         User user = setUserProperties(userRoleVO);
         user.setId(userRoleVO.getId());
         boolean b = user.updateById();
 
-        if(user.getId() != userRoleVO.getRoleId()){
+        // 之前的roleId和现在的role_id相比，如果变化了，就更新
+        if(beforeRoleId!= userRoleVO.getRoleId()){
             // 修改t_user_role表中的信息
             UserRole userRole = setUserRoleProperties(userRoleVO,user.getId());
             UserRole resultUserRole = userRole.selectOne(new QueryWrapper<UserRole>().eq("user_id", user.getId()));
@@ -113,7 +117,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         user.setPhone(userRoleVO.getPhone());
         user.setNickName(userRoleVO.getNickName());
-        user.setPassword(Md5Util.getMD5WithSalt(userRoleVO.getPassword()));
+        // 由于我在修改的时候把密码给隐藏了，所以这里要做一下判断
+        if(userRoleVO.getPassword() != null){
+            user.setPassword(Md5Util.getMD5WithSalt(userRoleVO.getPassword()));
+        }
         user.setDescription(userRoleVO.getDescription());
         return user;
     }

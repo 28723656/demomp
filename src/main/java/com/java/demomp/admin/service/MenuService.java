@@ -1,5 +1,6 @@
 package com.java.demomp.admin.service;
 
+import com.java.demomp.admin.VO.RoleMenuVO;
 import com.java.demomp.admin.entity.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,4 +18,9 @@ public interface MenuService extends IService<Menu> {
 
     List<Menu> getMenuList();
 
+    Integer addMenu(RoleMenuVO roleMenuVO);
+
+    Integer updateMenu(RoleMenuVO roleMenuVO);
+
+    Integer deleteMenuById(Integer id);
 }
