@@ -51,8 +51,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     }
 
-
-
+    @Override
+    public List<Role> getRoles() {
+        List<Role> roles = baseMapper.selectList(null);
+        return roles;
+    }
 
 
 }

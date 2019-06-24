@@ -17,4 +17,6 @@ import java.util.List;
 public interface RoleService extends IService<Role> {
 
     List<RoleMenuVO> getRoleList();
+
+    List<Role> getRoles();
 }

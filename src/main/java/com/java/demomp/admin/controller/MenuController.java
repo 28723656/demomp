@@ -25,12 +25,14 @@ public class MenuController {
     MenuService menuService;
 
     /**
-     * 获取列表
+     * 获取列表   List<RoleMenuVO>
      * @return
      */
     @GetMapping
     public Result getMenuList(){
         return new Result(true, StatusCode.OK, "查询成功", menuService.getMenuList());
     }
+
+
 
 }

@@ -29,4 +29,11 @@ public class RoleController {
       return new Result(true, StatusCode.OK, "查询成功", roleService.getRoleList());
     }
 
+    @GetMapping("/list")
+    public Result getRoles(){
+        return new Result(true, StatusCode.OK, "查询成功", roleService.getRoles());
+    }
+
+
+
 }

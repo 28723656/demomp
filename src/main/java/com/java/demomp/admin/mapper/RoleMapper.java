@@ -17,6 +17,6 @@ import java.util.List;
  */
 public interface RoleMapper extends BaseMapper<Role> {
 
-    @Select("SELECT r.*,rm.menu_id as tempMenuId  FROM t_role r, t_role_menu rm  where r.id = rm.role_id")
+    @Select("SELECT r.*,rm.menu_id as tempMenuId  FROM t_role r, t_role_menu rm  where r.id = rm.role_id and r.deleted = 0 and rm.deleted = 0")
     List<RoleMenuVO> getRoleList();
 }

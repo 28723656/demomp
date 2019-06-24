@@ -17,6 +17,6 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    @Select("select u.*,ur.role_id from t_user u ,t_user_role ur where u.id = ur.user_id")
+    @Select("select u.id,u.phone,u.nick_name,u.description,ur.role_id from t_user u ,t_user_role ur where u.id = ur.user_id and u.deleted = 0 and ur.deleted = 0")
     List<UserRoleVO> getUserList();
 }

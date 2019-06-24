@@ -8,6 +8,7 @@ import com.java.demomp.admin.entity.UserRole;
 import com.java.demomp.admin.mapper.UserMapper;
 import com.java.demomp.admin.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.java.demomp.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,7 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         user.setPhone(userRoleVO.getPhone());
         user.setNickName(userRoleVO.getNickName());
-        user.setPassword(userRoleVO.getPassword());
+        user.setPassword(Md5Util.getMD5WithSalt(userRoleVO.getPassword()));
         user.setDescription(userRoleVO.getDescription());
         return user;
     }
