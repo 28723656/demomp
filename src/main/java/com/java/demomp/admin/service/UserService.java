@@ -1,7 +1,10 @@
 package com.java.demomp.admin.service;
 
+import com.java.demomp.admin.VO.UserRoleVO;
 import com.java.demomp.admin.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserService extends IService<User> {
 
+    List<UserRoleVO> getUserList();
+
+    Integer addUser(UserRoleVO userRoleVO);
+
+    Integer updateUser(UserRoleVO userRoleVO);
+
+    Integer deleteUserById(Integer id);
 }

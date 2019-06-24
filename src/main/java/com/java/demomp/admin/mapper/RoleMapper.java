@@ -1,7 +1,11 @@
 package com.java.demomp.admin.mapper;
 
+import com.java.demomp.admin.VO.RoleMenuVO;
 import com.java.demomp.admin.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface RoleMapper extends BaseMapper<Role> {
 
+    @Select("SELECT r.*,rm.menu_id as tempMenuId  FROM t_role r, t_role_menu rm  where r.id = rm.role_id")
+    List<RoleMenuVO> getRoleList();
 }

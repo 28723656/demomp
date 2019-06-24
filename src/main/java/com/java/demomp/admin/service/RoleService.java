@@ -1,7 +1,10 @@
 package com.java.demomp.admin.service;
 
+import com.java.demomp.admin.VO.RoleMenuVO;
 import com.java.demomp.admin.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface RoleService extends IService<Role> {
 
+    List<RoleMenuVO> getRoleList();
 }
