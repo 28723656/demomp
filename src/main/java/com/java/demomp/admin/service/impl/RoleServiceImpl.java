@@ -2,6 +2,7 @@ package com.java.demomp.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.java.demomp.admin.VO.RoleMenuVO;
+import com.java.demomp.admin.VO.UserRoleVO;
 import com.java.demomp.admin.entity.Role;
 import com.java.demomp.admin.entity.RoleMenu;
 import com.java.demomp.admin.entity.UserRole;
@@ -113,6 +114,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if(b){
             redisTemplate.delete("roleMenuVOList");
             redisTemplate.delete("roleList");
+            redisTemplate.delete("getUserByRoleList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -146,6 +149,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if(b){
             redisTemplate.delete("roleMenuVOList");
             redisTemplate.delete("roleList");
+            redisTemplate.delete("getUserByRoleList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -172,11 +177,28 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             if(b && deleteNum){
                 redisTemplate.delete("roleMenuVOList");
                 redisTemplate.delete("roleList");
+                redisTemplate.delete("getUserByRoleList");
+                redisTemplate.delete("getRoleByMenuList");
                 return 1;
             }else {
                 return 0;
             }
         }
+    }
+
+    /**
+     * 通过menu获取Role
+     * @return
+     */
+    public List<RoleMenuVO> getRoleByMenu() {
+        List<RoleMenuVO> getRoleByMenuList = new ArrayList<>();
+        if(redisTemplate.opsForValue().get("getRoleByMenuList")==null){
+            getRoleByMenuList = baseMapper.getRoleByMenu();
+            redisTemplate.opsForValue().set("getRoleByMenuList",getRoleByMenuList);
+        }else{
+            return (List<RoleMenuVO>) redisTemplate.opsForValue().get("getRoleByMenuList");
+        }
+        return getRoleByMenuList;
     }
 
 

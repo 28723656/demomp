@@ -50,6 +50,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         boolean b = menu.insert();
         if(b){
             redisTemplate.delete("menuList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -70,6 +71,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         boolean b = menu.updateById();
         if(b){
             redisTemplate.delete("menuList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -89,6 +91,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         boolean delete = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("menu_id", id));
         if(b && delete){
             redisTemplate.delete("menuList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;

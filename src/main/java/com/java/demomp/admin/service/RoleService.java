@@ -1,6 +1,7 @@
 package com.java.demomp.admin.service;
 
 import com.java.demomp.admin.VO.RoleMenuVO;
+import com.java.demomp.admin.VO.UserRoleVO;
 import com.java.demomp.admin.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -25,4 +26,6 @@ public interface RoleService extends IService<Role> {
     Integer updateRole(RoleMenuVO roleMenuVO);
 
     Integer deleteRole(Integer id);
+
+    List<RoleMenuVO> getRoleByMenu();
 }

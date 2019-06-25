@@ -32,6 +32,17 @@ public class UserController {
       return new Result(true, StatusCode.OK,"查询成功", userService.getUserList()) ;
     }
 
+
+    /**
+     * 通过角色找到用户
+     * @return
+     */
+    @GetMapping("/user")
+    public Result getUserByRole(){
+        return new Result(true, StatusCode.OK, "查询成功", userService.getUserByRole());
+
+    }
+
     /**
      * 添加用户
      * @param userRoleVO

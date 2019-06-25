@@ -64,6 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if(insert && insert1){
             redisTemplate.delete("userRoleVOList");
+            redisTemplate.delete("getUserByRoleList");
             return 1;
         }else {
             return 0;
@@ -98,6 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if(b){
             redisTemplate.delete("userRoleVOList");
+            redisTemplate.delete("getUserByRoleList");
             return 1;
         }else {
             return 0;
@@ -123,11 +125,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if(b && b1){
             redisTemplate.delete("userRoleVOList");
+            redisTemplate.delete("getUserByRoleList");
             return 1;
         }else {
             return 0;
         }
 
+    }
+
+    /**
+     * 通过role找到用户
+     * @return
+     */
+    public List<UserRoleVO> getUserByRole() {
+        List<UserRoleVO> getUserByRoleList = new ArrayList<>();
+        if(redisTemplate.opsForValue().get("getUserByRoleList")==null){
+            getUserByRoleList = baseMapper.getUserByRole();
+            redisTemplate.opsForValue().set("getUserByRoleList",getUserByRoleList);
+        }else{
+            return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList");
+        }
+        return getUserByRoleList;
     }
 
 

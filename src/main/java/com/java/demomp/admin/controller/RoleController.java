@@ -33,6 +33,12 @@ public class RoleController {
         return new Result(true, StatusCode.OK, "查询成功", roleService.getRoles());
     }
 
+    @GetMapping("/role")
+    public Result getRoleByMenu(){
+        return new Result(true, StatusCode.OK, "查询成功", roleService.getRoleByMenu());
+
+    }
+
 
     /**
      * 添加角色
