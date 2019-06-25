@@ -25,4 +25,6 @@ public interface UserService extends IService<User> {
     Integer deleteUserById(Integer id);
 
     List<UserRoleVO> getUserByRole();
+
+    User login(User user);
 }

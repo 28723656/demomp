@@ -30,6 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     RedisTemplate redisTemplate;
 
+
     /**
      * 获取列表
      * @return
@@ -146,6 +147,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList");
         }
         return getUserByRoleList;
+    }
+
+    /**
+     * 登录
+     * @param user
+     * @return
+     */
+    public User login(User user) {
+        User resultUser = baseMapper.selectOne(new QueryWrapper<User>().eq("phone", user.getPhone()).eq("password", Md5Util.getMD5WithSalt(user.getPassword())));
+        return resultUser;
     }
 
 

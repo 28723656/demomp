@@ -2,11 +2,16 @@ package com.java.demomp.admin.controller;
 
 
 import com.java.demomp.admin.VO.UserRoleVO;
+import com.java.demomp.admin.entity.User;
 import com.java.demomp.admin.service.UserService;
 import com.java.demomp.util.Result;
 import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
@@ -79,4 +84,15 @@ public class UserController {
         return new Result(true,StatusCode.OK,"删除成功");
     }
 
+    @PostMapping("/login")
+    public Result login(@RequestBody User user, HttpServletResponse response){
+       User resultUser = userService.login(user);
+       if(resultUser != null){
+           resultUser.setPassword(null);
+           return new Result(true,StatusCode.OK,"登录成功",resultUser);
+       }else {
+           return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误");
+       }
+
+    }
 }
