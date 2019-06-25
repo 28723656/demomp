@@ -7,13 +7,15 @@ import com.java.demomp.admin.entity.RoleMenu;
 import com.java.demomp.admin.mapper.MenuMapper;
 import com.java.demomp.admin.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author lost丶wind
@@ -22,12 +24,22 @@ import java.util.List;
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     public List<Menu> getMenuList() {
-      return  baseMapper.selectList(null);
+        if (redisTemplate.opsForValue().get("menuList") == null) {
+            List<Menu> menuList = baseMapper.selectList(null);
+            redisTemplate.opsForValue().set("menuList",menuList);
+            return menuList;
+        }else {
+            return (List<Menu>) redisTemplate.opsForValue().get("menuList");
+        }
     }
 
     /**
      * 添加菜单
+     *
      * @param roleMenuVO
      * @return
      */
@@ -35,12 +47,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Menu menu = new Menu();
         menu.setName(roleMenuVO.getName());
         menu.setDescription(roleMenuVO.getDescription());
-        boolean insert = menu.insert();
-        return insert?1:0;
+        boolean b = menu.insert();
+        if(b){
+            redisTemplate.delete("menuList");
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
     /**
      * 更新菜单
+     *
      * @param roleMenuVO
      * @return
      */
@@ -49,20 +67,31 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menu.setId(roleMenuVO.getId());
         menu.setName(roleMenuVO.getName());
         menu.setDescription(roleMenuVO.getDescription());
-        boolean update = menu.updateById();
-        return update?1:0;
+        boolean b = menu.updateById();
+        if(b){
+            redisTemplate.delete("menuList");
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
     /**
      * 删除菜单
+     *
      * @param id
      * @return
      */
     public Integer deleteMenuById(Integer id) {
-       // 删除自己的菜单
+        // 删除自己的菜单
         boolean b = new Menu().deleteById(id);
         // 删除 t_role_menu中的菜单
         boolean delete = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("menu_id", id));
-        return b?1:0;
+        if(b && delete){
+            redisTemplate.delete("menuList");
+            return 1;
+        }else {
+            return 0;
+        }
     }
 }

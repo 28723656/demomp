@@ -10,8 +10,10 @@ import com.java.demomp.admin.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.java.demomp.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +27,23 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 获取列表
      * @return
      */
     public List<UserRoleVO> getUserList() {
-        List<UserRoleVO> userRoleVOList =   baseMapper.getUserList();
+        List<UserRoleVO> userRoleVOList = new ArrayList<>();
+        // 放在redis里面
+        if(redisTemplate.opsForValue().get("userRoleVOList") == null){
+             userRoleVOList =   baseMapper.getUserList();
+            redisTemplate.opsForValue().set("userRoleVOList",userRoleVOList);
+        }else{
+            return (List<UserRoleVO>) redisTemplate.opsForValue().get("userRoleVOList");
+        }
+
         return userRoleVOList;
     }
 
@@ -51,6 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean insert1 = userRole.insert();
 
         if(insert && insert1){
+            redisTemplate.delete("userRoleVOList");
             return 1;
         }else {
             return 0;
@@ -83,8 +96,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             boolean b1 = userRole.updateById();
         }
 
+        if(b){
+            redisTemplate.delete("userRoleVOList");
+            return 1;
+        }else {
+            return 0;
+        }
 
-        return 1;
 
     }
 
@@ -104,6 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean b1 = userRole.delete(new QueryWrapper<UserRole>().eq("user_id", id));
 
         if(b && b1){
+            redisTemplate.delete("userRoleVOList");
             return 1;
         }else {
             return 0;

@@ -9,6 +9,8 @@ import com.java.demomp.admin.mapper.RoleMapper;
 import com.java.demomp.admin.service.RoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.ibatis.annotations.Insert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,39 +27,64 @@ import java.util.List;
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    /**
+     * 获取RoleMenuVO 的list
+     * @return
+     */
     public List<RoleMenuVO> getRoleList() {
-        List<RoleMenuVO> roleList = baseMapper.getRoleList();
 
         // 用于存放的
         List<RoleMenuVO> resultRoleList = new ArrayList<>();
-        List<Integer> menuIdList = new ArrayList<>();
 
-        if (roleList != null && roleList.size() > 0) {
+        if(redisTemplate.opsForValue().get("roleMenuVOList") == null){
+            List<RoleMenuVO> roleList = baseMapper.getRoleList();
+            List<Integer> menuIdList = new ArrayList<>();
 
-            for (int i = 0; i < roleList.size(); i++) {
-                RoleMenuVO roleMenuVO = roleList.get(i);
-                Integer resultId = roleMenuVO.getId();
-                Integer nextId = null;
-                if (i < roleList.size() - 1) {
-                    nextId = roleList.get(i + 1).getId();
+            if (roleList != null && roleList.size() > 0) {
+
+                for (int i = 0; i < roleList.size(); i++) {
+                    RoleMenuVO roleMenuVO = roleList.get(i);
+                    Integer resultId = roleMenuVO.getId();
+                    Integer nextId = null;
+                    if (i < roleList.size() - 1) {
+                        nextId = roleList.get(i + 1).getId();
+                    }
+                    menuIdList.add(roleMenuVO.getTempMenuId());
+                    // 如果两个id不相同
+                    if (nextId != resultId) {
+                        roleMenuVO.setMenuId(menuIdList);
+                        resultRoleList.add(roleMenuVO);
+                        menuIdList = new ArrayList<>();
+                    }
                 }
-                menuIdList.add(roleMenuVO.getTempMenuId());
-                // 如果两个id不相同
-                if (nextId != resultId) {
-                    roleMenuVO.setMenuId(menuIdList);
-                    resultRoleList.add(roleMenuVO);
-                    menuIdList = new ArrayList<>();
-                }
+                redisTemplate.opsForValue().set("roleMenuVOList",resultRoleList);
+
             }
         }
-
+        else {
+            return (List<RoleMenuVO>) redisTemplate.opsForValue().get("roleMenuVOList");
+        }
         return resultRoleList;
 
     }
 
+    /**
+     * 获取roleList
+     * @return
+     */
     public List<Role> getRoles() {
-        List<Role> roles = baseMapper.selectList(null);
-        return roles;
+        List<Role> roleList = new ArrayList<>();
+        if(redisTemplate.opsForValue().get("roleList") == null){
+            roleList = baseMapper.selectList(null);
+             redisTemplate.opsForValue().set("roleList",roleList);
+        }else {
+            return (List<Role>) redisTemplate.opsForValue().get("roleList");
+        }
+        return roleList;
     }
 
 
@@ -83,7 +110,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleMenu.insert();
         }
 
-        return 1;
+        if(b){
+            redisTemplate.delete("roleMenuVOList");
+            redisTemplate.delete("roleList");
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
     /**
@@ -110,7 +143,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleMenu.setMenuId(menuIdList.get(i));
             roleMenu.insert();
         }
-        return 1;
+        if(b){
+            redisTemplate.delete("roleMenuVOList");
+            redisTemplate.delete("roleList");
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
     /**
@@ -130,7 +169,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             boolean b = new Role().deleteById(id);
             // 顺便还要把RoleMenu的关系给删除了
             boolean deleteNum = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("role_id", id));;
-            if(b){
+            if(b && deleteNum){
+                redisTemplate.delete("roleMenuVOList");
+                redisTemplate.delete("roleList");
                 return 1;
             }else {
                 return 0;
