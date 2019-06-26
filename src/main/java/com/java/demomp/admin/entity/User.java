@@ -52,6 +52,11 @@ public class User extends Model<User> {
     private String nickName;
 
     /**
+     * 是否为管理员  1-管理员  2-小弟  3-被封禁的账号
+     */
+    private Integer admin;
+
+    /**
      * 描述
      */
     private String description;

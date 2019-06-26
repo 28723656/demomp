@@ -57,7 +57,14 @@ public class UserController {
     @PostMapping
     public Result addUser(@RequestBody UserRoleVO userRoleVO){
         Integer addNum = userService.addUser(userRoleVO);
-        return new Result(true,StatusCode.OK,"添加成功");
+        if(addNum == 1){
+            return new Result(true,StatusCode.OK,"添加成功");
+        } else if(addNum == 0) {
+            return  new Result(false,StatusCode.ERROR,"添加失败");
+        }else {
+            return  new Result(false,StatusCode.ERROR,"手机号码被占用");
+        }
+
     }
 
 
@@ -70,7 +77,12 @@ public class UserController {
     @PutMapping
     public Result updateUser(@RequestBody UserRoleVO userRoleVO){
         Integer addNum = userService.updateUser(userRoleVO);
-        return new Result(true,StatusCode.OK,"修改成功");
+        if(addNum == 1){
+            return new Result(true,StatusCode.OK,"修改成功");
+        }else {
+            return  new Result(false,StatusCode.ERROR,"修改失败");
+        }
+
     }
 
 
@@ -82,7 +94,14 @@ public class UserController {
     @DeleteMapping("{id}")
     public Result deleteUserById(@PathVariable Integer id){
         Integer deleteNum = userService.deleteUserById(id);
-        return new Result(true,StatusCode.OK,"删除成功");
+        if(deleteNum == 1){
+            return new Result(true,StatusCode.OK,"删除成功");
+        }else if(deleteNum == 0){
+            return new Result(false,StatusCode.ERROR,"删除失败");
+        }else {
+            return new Result(false,StatusCode.ERROR,"管理员是你想删就能删的？");
+        }
+
     }
 
     @PostMapping("/login")

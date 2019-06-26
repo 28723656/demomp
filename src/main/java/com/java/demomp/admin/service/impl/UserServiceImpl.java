@@ -55,21 +55,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     public Integer addUser(UserRoleVO userRoleVO) {
 
-        // 先在t_user表中添加用户
-       User user = setUserProperties(userRoleVO);
-        boolean insert = user.insert();
+        // 找出phone
+        User resultUser = new User().selectOne(new QueryWrapper<User>().eq("phone", userRoleVO.getPhone()));
 
-        // 在t_user_role中确定关系
-        UserRole userRole = setUserRoleProperties(userRoleVO,user.getId());
-        boolean insert1 = userRole.insert();
+        // 如果手机号码没有占用，可以注册
+        if(resultUser == null){
+            // 先在t_user表中添加用户
+            User user = setUserProperties(userRoleVO);
+            boolean insert = user.insert();
 
-        if(insert && insert1){
-            redisTemplate.delete("userRoleVOList");
-            redisTemplate.delete("getUserByRoleList");
-            return 1;
+            // 在t_user_role中确定关系
+            UserRole userRole = setUserRoleProperties(userRoleVO,user.getId());
+            boolean insert1 = userRole.insert();
+
+            if(insert && insert1){
+                redisTemplate.delete("userRoleVOList");
+                redisTemplate.delete("getUserByRoleList");
+                return 1;
+            }else {
+                return 0;
+            }
         }else {
-            return 0;
+            return -1;
         }
+
+
 
 
     }
@@ -116,7 +126,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return
      */
     public Integer deleteUserById(Integer id) {
-       // 删除t_user表
+
+        // 如果是管理员的话，滚回去，敢删我？
+        User resultUser = new User().selectById(id);
+        if(resultUser.getAdmin() == 1){
+            return -1;
+        }
+
+
+        // 删除t_user表
         User user = new User();
         boolean b = user.setId(id).deleteById();
 
