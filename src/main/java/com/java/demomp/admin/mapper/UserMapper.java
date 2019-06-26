@@ -22,4 +22,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT  u.id,u.phone,u.description,u.nick_name,ur.role_id from t_user u, t_user_role ur where  ur.user_id = u.id and u.deleted =0 and ur.deleted =0")
     List<UserRoleVO> getUserByRole();
+
+    @Select("select m.name  from t_menu m where id in (select rm.menu_id from t_role_menu rm where rm.role_id = (select ur.role_id from t_user_role ur where  user_id =#{id} and ur.deleted = 0) and  rm.deleted = 0 ) and m.deleted = 0")
+    List<String> getMenusByUserId(Integer id);
 }

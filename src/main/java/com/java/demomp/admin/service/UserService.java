@@ -27,4 +27,6 @@ public interface UserService extends IService<User> {
     List<UserRoleVO> getUserByRole();
 
     User login(User user);
+
+    List<String> getMenusByUserId(Integer id);
 }

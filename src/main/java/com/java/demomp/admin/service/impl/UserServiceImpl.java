@@ -159,6 +159,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return resultUser;
     }
 
+    /**
+     * 通过
+     * @return
+     */
+    public List<String> getMenusByUserId(Integer id) {
+       return  baseMapper.getMenusByUserId(id);
+    }
+
 
     // 抽取一个公共方法，设置基本属性 t_user
     public User setUserProperties(UserRoleVO userRoleVO){

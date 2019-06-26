@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * <p>
@@ -92,6 +93,22 @@ public class UserController {
            return new Result(true,StatusCode.OK,"登录成功",resultUser);
        }else {
            return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误");
+       }
+
+    }
+
+    /**
+     * 通过用户id获取菜单权限
+     * @param id
+     * @return
+     */
+    @GetMapping("/menu/{id}")
+    public Result getMenusByUserId(@PathVariable Integer id){
+       List<String> userMenus =  userService.getMenusByUserId(id);
+       if(userMenus!=null && userMenus.size() > 0){
+           return new Result(true,StatusCode.OK,"查询成功",userMenus);
+       }else {
+           return new Result(false,StatusCode.ERROR,"没有权限");
        }
 
     }
