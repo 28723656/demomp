@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -105,10 +106,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result login(@RequestBody User user, HttpServletResponse response){
+    public Result login(@RequestBody User user, HttpSession session){
        User resultUser = userService.login(user);
        if(resultUser != null){
            resultUser.setPassword(null);
+           // 存入session
+           session.setAttribute("user",resultUser);
            return new Result(true,StatusCode.OK,"登录成功",resultUser);
        }else {
            return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误");

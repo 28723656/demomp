@@ -2,6 +2,7 @@ package com.java.demomp.plan.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.java.demomp.admin.entity.User;
 import com.java.demomp.plan.entity.Dict;
 import com.java.demomp.plan.entity.DictParent;
 import com.java.demomp.plan.entity.Plan;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements PlanService {
 
+    @Autowired
+    HttpSession session;
 
     @Autowired
     DictParentService dictParentService;
@@ -43,6 +47,8 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     @Autowired
     RedisTemplate redisTemplate;
+
+     User userSession = (User) session.getAttribute("user");
 
     /**
      * 添加计划
@@ -66,7 +72,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             }
 
             // 获取已选颜色列表,父类的列表
-            List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("type", 4));
+            List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("type", 4).eq("user_id",userSession.getId()));
             // 获取所有有颜色的父类列表
             List<String> colorList = new ArrayList<>();
             for (int i = 0; i < planList.size(); i++) {
@@ -119,7 +125,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     // 暂时没有service调用
     public List<Plan> getPlanByType(Integer type) {
-        return baseMapper.selectList(new QueryWrapper<Plan>().eq("type", type).orderByDesc("top", "rank"));
+        return baseMapper.selectList(new QueryWrapper<Plan>().eq("type", type).eq("user_id",userSession.getId()).orderByDesc("top", "rank"));
     }
 
     // 获得分组Plan

@@ -93,6 +93,12 @@ public class Plan extends Model<Plan> {
     private String color;
 
     /**
+     * 用户id
+     */
+
+    private Integer userId;
+
+    /**
      * 逻辑删除
      */
     @TableLogic
