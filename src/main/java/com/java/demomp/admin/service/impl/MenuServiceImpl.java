@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.java.demomp.admin.VO.RoleMenuVO;
 import com.java.demomp.admin.entity.Menu;
 import com.java.demomp.admin.entity.RoleMenu;
+import com.java.demomp.admin.entity.User;
 import com.java.demomp.admin.mapper.MenuMapper;
 import com.java.demomp.admin.service.MenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -25,15 +27,21 @@ import java.util.List;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
     @Autowired
+    HttpSession session;
+
+    @Autowired
     RedisTemplate redisTemplate;
 
+    // redis存储的最大时间
+    static final Integer REDIS_MAX_TIME = 60*60*24*7;
+
     public List<Menu> getMenuList() {
-        if (redisTemplate.opsForValue().get("menuList") == null) {
+        if (redisTemplate.opsForValue().get("menuList"+getSessionUserId()) == null) {
             List<Menu> menuList = baseMapper.selectList(null);
-            redisTemplate.opsForValue().set("menuList",menuList);
+            redisTemplate.opsForValue().set("menuList"+getSessionUserId(),menuList,REDIS_MAX_TIME);
             return menuList;
         }else {
-            return (List<Menu>) redisTemplate.opsForValue().get("menuList");
+            return (List<Menu>) redisTemplate.opsForValue().get("menuList"+getSessionUserId());
         }
     }
 
@@ -49,8 +57,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menu.setDescription(roleMenuVO.getDescription());
         boolean b = menu.insert();
         if(b){
-            redisTemplate.delete("menuList");
-            redisTemplate.delete("getRoleByMenuList");
+            redisTemplate.delete("menuList"+getSessionUserId());
+            redisTemplate.delete("getRoleByMenuList"+getSessionUserId());
             return 1;
         }else {
             return 0;
@@ -70,8 +78,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menu.setDescription(roleMenuVO.getDescription());
         boolean b = menu.updateById();
         if(b){
-            redisTemplate.delete("menuList");
-            redisTemplate.delete("getRoleByMenuList");
+            redisTemplate.delete("menuList"+getSessionUserId());
+            redisTemplate.delete("getRoleByMenuList"+getSessionUserId());
             return 1;
         }else {
             return 0;
@@ -90,11 +98,21 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 删除 t_role_menu中的菜单
         boolean delete = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("menu_id", id));
         if(b && delete){
-            redisTemplate.delete("menuList");
-            redisTemplate.delete("getRoleByMenuList");
+            redisTemplate.delete("menuList"+getSessionUserId());
+            redisTemplate.delete("getRoleByMenuList"+getSessionUserId());
             return 1;
         }else {
             return 0;
         }
     }
+
+    public Integer getSessionUserId(){
+        User userSession = (User) session.getAttribute("user");
+        if(userSession!=null){
+            return userSession.getId();
+        }else {
+            return 0;
+        }
+    }
+
 }

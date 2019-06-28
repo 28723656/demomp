@@ -2,6 +2,7 @@ package com.java.demomp.plan.mapper;
 
 import com.java.demomp.plan.entity.Plan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Map;
@@ -17,8 +18,8 @@ import java.util.Map;
 public interface PlanMapper extends BaseMapper<Plan> {
 
     // 通过父id统计百分比总数
-    @Select("select sum(percent) from t_plan where parent_id =#{weekPlanParentId} and deleted=0 ")
-    Double selectSumPercent(Integer weekPlanParentId);
+    @Select("select sum(percent) from t_plan where parent_id =#{weekPlanParentId} and user_id=#{userId} and deleted=0 ")
+    Double selectSumPercent(@Param("weekPlanParentId") Integer weekPlanParentId,@Param("userId") Integer userId);
 
     @Select("")
     Map<String, Object> getTreeDataByParentId(Object o);

@@ -28,7 +28,12 @@ import java.util.List;
 public class UserController {
 
     @Autowired
+    HttpSession session;
+
+    @Autowired
     UserService userService;
+
+
 
     /**
      * 获取列表
@@ -106,12 +111,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result login(@RequestBody User user, HttpSession session){
+    public Result login(@RequestBody User user){
        User resultUser = userService.login(user);
        if(resultUser != null){
            resultUser.setPassword(null);
            // 存入session
            session.setAttribute("user",resultUser);
+
+          User sessionUser = (User) session.getAttribute("user");
+           System.out.println(sessionUser);
            return new Result(true,StatusCode.OK,"登录成功",resultUser);
        }else {
            return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误");
