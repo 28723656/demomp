@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -35,7 +36,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     RedisTemplate redisTemplate;
 
     // redis存储的最大时间
-    static final Integer REDIS_MAX_TIME = 60*60*24*7;
+    static final Integer REDIS_MAX_TIME = 7;
 
 
     /**
@@ -45,11 +46,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public List<UserRoleVO> getUserList() {
         List<UserRoleVO> userRoleVOList = new ArrayList<>();
         // 放在redis里面
-        if(redisTemplate.opsForValue().get("userRoleVOList"+getSessionUserId()) == null){
+        if(redisTemplate.opsForValue().get("userRoleVOList"+"_"+getSessionUserId()) == null){
              userRoleVOList =   baseMapper.getUserList();
-            redisTemplate.opsForValue().set("userRoleVOList"+getSessionUserId(),userRoleVOList,REDIS_MAX_TIME);
+            redisTemplate.opsForValue().set("userRoleVOList"+"_"+getSessionUserId(),userRoleVOList,REDIS_MAX_TIME, TimeUnit.DAYS);
         }else{
-            return (List<UserRoleVO>) redisTemplate.opsForValue().get("userRoleVOList"+getSessionUserId());
+            return (List<UserRoleVO>) redisTemplate.opsForValue().get("userRoleVOList"+"_"+getSessionUserId());
         }
 
         return userRoleVOList;
@@ -76,8 +77,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             boolean insert1 = userRole.insert();
 
             if(insert && insert1){
-                redisTemplate.delete("userRoleVOList"+getSessionUserId());
-                redisTemplate.delete("getUserByRoleList"+getSessionUserId());
+                redisTemplate.delete("userRoleVOList"+"_"+getSessionUserId());
+                redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
                 return 1;
             }else {
                 return 0;
@@ -116,8 +117,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         if(b){
-            redisTemplate.delete("userRoleVOList"+getSessionUserId());
-            redisTemplate.delete("getUserByRoleList"+getSessionUserId());
+            redisTemplate.delete("userRoleVOList"+"_"+getSessionUserId());
+            redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
             return 1;
         }else {
             return 0;
@@ -150,8 +151,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean b1 = userRole.delete(new QueryWrapper<UserRole>().eq("user_id", id));
 
         if(b && b1){
-            redisTemplate.delete("userRoleVOList"+getSessionUserId());
-            redisTemplate.delete("getUserByRoleList"+getSessionUserId());
+            redisTemplate.delete("userRoleVOList"+"_"+getSessionUserId());
+            redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
             return 1;
         }else {
             return 0;
@@ -165,11 +166,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     public List<UserRoleVO> getUserByRole() {
         List<UserRoleVO> getUserByRoleList = new ArrayList<>();
-        if(redisTemplate.opsForValue().get("getUserByRoleList"+getSessionUserId())==null){
+        if(redisTemplate.opsForValue().get("getUserByRoleList"+"_"+getSessionUserId())==null){
             getUserByRoleList = baseMapper.getUserByRole();
-            redisTemplate.opsForValue().set("getUserByRoleList"+getSessionUserId(),getUserByRoleList,REDIS_MAX_TIME);
+            redisTemplate.opsForValue().set("getUserByRoleList"+"_"+getSessionUserId(),getUserByRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
         }else{
-            return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList"+getSessionUserId());
+            return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList"+"_"+getSessionUserId());
         }
         return getUserByRoleList;
     }
