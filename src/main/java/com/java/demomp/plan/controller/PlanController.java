@@ -36,10 +36,10 @@ public class PlanController {
      *
      * @return
      */
-    @PostMapping()
-    public Result addPlan(@RequestBody Plan plan) {
+    @PostMapping("/{userId}")
+    public Result addPlan(@RequestBody Plan plan,@PathVariable Integer userId) {
         plan.setPercent(0.00);
-        Integer integer = planService.addPlan(plan);
+        Integer integer = planService.addPlan(plan,userId);
         if (integer == 1) {
             return new Result(true, StatusCode.OK, "添加成功");
         } else {
@@ -54,10 +54,10 @@ public class PlanController {
      * @param type
      * @return
      */
-    @GetMapping("/{type}")
-    public Result getPlanByType(@PathVariable Integer type) {
+    @GetMapping("/{type}/{userId}")
+    public Result getPlanByType(@PathVariable Integer type,@PathVariable Integer userId) {
 
-        List<Plan> planList = planService.getPlanByType(type);
+        List<Plan> planList = planService.getPlanByType(type,userId);
         if (planList != null && planList.size() > 0) {
             return new Result(true, StatusCode.OK, "查询成功", planList);
         } else {
@@ -73,9 +73,9 @@ public class PlanController {
      *
      * @return
      */
-    @GetMapping
-    public Result getPlan() {
-        return new Result(true, StatusCode.OK, "查询成功", planService.getGroupPlan());
+    @GetMapping("/{userId}")
+    public Result getPlan(@PathVariable Integer userId) {
+        return new Result(true, StatusCode.OK, "查询成功", planService.getGroupPlan(userId));
     }
 
 
@@ -85,9 +85,9 @@ public class PlanController {
      * @param plan
      * @return
      */
-    @PutMapping
-    public Result updatePlanFinishedById(@RequestBody Plan plan) {
-        Integer updateNum = planService.updatePlanFinishedById(plan);
+    @PutMapping("/{userId}")
+    public Result updatePlanFinishedById(@RequestBody Plan plan,@PathVariable Integer userId) {
+        Integer updateNum = planService.updatePlanFinishedById(plan,userId);
         if (updateNum > 0) {
             return new Result(true, StatusCode.OK, "修改成功");
         } else {
@@ -100,11 +100,11 @@ public class PlanController {
      * 修改计划
      */
 
-    @PutMapping("/update")
-    public Result updatePlan(@RequestBody Plan plan) {
-        Integer updateNum = planService.updatePlan(plan);
+    @PutMapping("/update/{userId}")
+    public Result updatePlan(@RequestBody Plan plan,@PathVariable Integer userId) {
+        Integer updateNum = planService.updatePlan(plan,userId);
         if (updateNum > 0) {
-            return new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan));
+            return new Result(true, StatusCode.OK, "修改成功", planService.updatePlan(plan,userId));
         } else {
             return new Result(false, StatusCode.ERROR, "修改失败");
         }
@@ -117,9 +117,9 @@ public class PlanController {
      * @param id
      * @return
      */
-    @DeleteMapping("{id}")
-    public Result deleteById(@PathVariable Integer id) {
-        Integer deleteNum = planService.deletePlanById(id);
+    @DeleteMapping("/{id}/{userId}")
+    public Result deleteById(@PathVariable Integer id,@PathVariable Integer userId) {
+        Integer deleteNum = planService.deletePlanById(id,userId);
         if (deleteNum > 0) {
             return new Result(true, StatusCode.OK, "删除成功");
         } else {
@@ -133,12 +133,12 @@ public class PlanController {
      * @param parentId
      * @return
      */
-    @GetMapping("/tree/{parentId}")
-    public Result getTreeList(@PathVariable Integer parentId) {
+    @GetMapping("/tree/{parentId}/{userId}")
+    public Result getTreeList(@PathVariable Integer parentId,@PathVariable Integer userId) {
         parentId = parentId == -1 ? null : parentId;
-        List<Object> treeList = planService.getTreeList(parentId);
+        List<Object> treeList = planService.getTreeList(parentId,userId);
         if(treeList != null && treeList.size() > 0){
-            return new Result(true, StatusCode.OK, "查询树成功", planService.getTreeList(parentId));
+            return new Result(true, StatusCode.OK, "查询树成功", planService.getTreeList(parentId,userId));
         }else{
             return new Result(false, StatusCode.ERROR, "没有数据或查询错误");
         }
@@ -149,9 +149,9 @@ public class PlanController {
     /**
      * 获得树的List
      */
-    @GetMapping("/tree")
-    public Result getTreeList() {
-        List<Object> treeList = planService.getTreeList();
+    @GetMapping("/tree/{userId}")
+    public Result getTreeList(@PathVariable Integer userId) {
+        List<Object> treeList = planService.getTreeList(userId);
         if (treeList != null && treeList.size() > 0) {
             return new Result(true, StatusCode.OK, "查询树成功", treeList);
         } else {

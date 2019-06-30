@@ -78,6 +78,11 @@ public class Plan extends Model<Plan> {
     private Boolean top;
 
     /**
+     * 是否为通用计划
+     */
+    private Integer base;
+
+    /**
      * 类型：当日、本周、当月、年
      */
     private Integer type;

@@ -4,16 +4,23 @@ package com.java.demomp.admin.controller;
 import com.java.demomp.admin.VO.UserRoleVO;
 import com.java.demomp.admin.entity.User;
 import com.java.demomp.admin.service.UserService;
+import com.java.demomp.plan.entity.Plan;
+import com.java.demomp.plan.service.PlanService;
 import com.java.demomp.util.Result;
 import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.server.Session;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -28,10 +35,16 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    HttpSession session;
+    UserService userService;
 
     @Autowired
-    UserService userService;
+    PlanService planService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    @Autowired
+    HttpServletRequest request;
 
 
 
@@ -74,7 +87,6 @@ public class UserController {
     }
 
 
-
     /**
      * 修改用户
      * @param userRoleVO
@@ -114,13 +126,13 @@ public class UserController {
     public Result login(@RequestBody User user){
        User resultUser = userService.login(user);
        if(resultUser != null){
+           // 登录的时候把用户信息，和通用计划放入localStorage里面
+           List<Plan> basePlanList = planService.getBasePlanByUserId(resultUser.getId());
            resultUser.setPassword(null);
-           // 存入session
-           session.setAttribute("user",resultUser);
-
-          User sessionUser = (User) session.getAttribute("user");
-           System.out.println(sessionUser);
-           return new Result(true,StatusCode.OK,"登录成功",resultUser);
+           Map<String,Object> map = new HashMap<>();
+           map.put("basePlanList",basePlanList);
+           map.put("user",resultUser);
+           return new Result(true,StatusCode.OK,"登录成功",map);
        }else {
            return new Result(false,StatusCode.LOGINERROR,"用户名或密码错误");
        }

@@ -37,12 +37,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     static final Integer REDIS_MAX_TIME = 7;
 
     public List<Menu> getMenuList() {
-        if (redisTemplate.opsForValue().get("menuList"+"_"+getSessionUserId()) == null) {
+        if (redisTemplate.opsForValue().get("menuList") == null) {
             List<Menu> menuList = baseMapper.selectList(null);
-            redisTemplate.opsForValue().set("menuList"+"_"+getSessionUserId(),menuList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("menuList",menuList,REDIS_MAX_TIME, TimeUnit.DAYS);
             return menuList;
         }else {
-            return (List<Menu>) redisTemplate.opsForValue().get("menuList"+"_"+getSessionUserId());
+            return (List<Menu>) redisTemplate.opsForValue().get("menuList");
         }
     }
 
@@ -58,8 +58,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menu.setDescription(roleMenuVO.getDescription());
         boolean b = menu.insert();
         if(b){
-            redisTemplate.delete("menuList"+"_"+getSessionUserId());
-            redisTemplate.delete("getRoleByMenuList"+"_"+getSessionUserId());
+            redisTemplate.delete("menuList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -79,8 +79,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menu.setDescription(roleMenuVO.getDescription());
         boolean b = menu.updateById();
         if(b){
-            redisTemplate.delete("menuList"+"_"+getSessionUserId());
-            redisTemplate.delete("getRoleByMenuList"+"_"+getSessionUserId());
+            redisTemplate.delete("menuList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -99,21 +99,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 删除 t_role_menu中的菜单
         boolean delete = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("menu_id", id));
         if(b && delete){
-            redisTemplate.delete("menuList"+"_"+getSessionUserId());
-            redisTemplate.delete("getRoleByMenuList"+"_"+getSessionUserId());
+            redisTemplate.delete("menuList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
         }
     }
 
-    public Integer getSessionUserId(){
-        User userSession = (User) session.getAttribute("user");
-        if(userSession!=null){
-            return userSession.getId();
-        }else {
-            return 0;
-        }
-    }
 
 }

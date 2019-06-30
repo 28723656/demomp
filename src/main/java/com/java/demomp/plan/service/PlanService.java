@@ -16,19 +16,23 @@ import java.util.Map;
  */
 public interface PlanService extends IService<Plan> {
 
-    Integer addPlan(Plan plan);
+    Integer addPlan(Plan plan,Integer userId);
 
-    List<Plan> getPlanByType(Integer type);
+    List<Plan> getPlanByType(Integer type,Integer userId);
 
-    Map<String, List<Plan>> getGroupPlan();
+    Map<String, List<Plan>> getGroupPlan(Integer userId);
 
-    Integer updatePlanFinishedById(Plan id);
+    Integer updatePlanFinishedById(Plan id,Integer userId);
 
-    Integer updatePlan(Plan plan);
+    Integer updatePlan(Plan plan,Integer userId);
 
-    Integer deletePlanById(Integer id);
+    Integer deletePlanById(Integer id,Integer userId);
 
-     List<Object> getTreeList(Integer parentId);
+     List<Object> getTreeList(Integer parentId,Integer userId);
 
-    List<Object> getTreeList();
+    List<Object> getTreeList(Integer userId);
+
+    List<Plan> getBasePlanByUserId(Integer userId);
+
+    Boolean insertThreeBasePlan(Integer userId);
 }

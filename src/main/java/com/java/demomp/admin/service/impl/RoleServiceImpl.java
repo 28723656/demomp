@@ -49,7 +49,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         // 用于存放的
         List<RoleMenuVO> resultRoleList = new ArrayList<>();
 
-        if(redisTemplate.opsForValue().get("roleMenuVOList"+"_"+getSessionUserId()) == null){
+        if(redisTemplate.opsForValue().get("roleMenuVOList") == null){
             List<RoleMenuVO> roleList = baseMapper.getRoleList();
             List<Integer> menuIdList = new ArrayList<>();
 
@@ -70,12 +70,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                         menuIdList = new ArrayList<>();
                     }
                 }
-                redisTemplate.opsForValue().set("roleMenuVOList"+"_"+getSessionUserId(),resultRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
+                redisTemplate.opsForValue().set("roleMenuVOList",resultRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
 
             }
         }
         else {
-            return (List<RoleMenuVO>) redisTemplate.opsForValue().get("roleMenuVOList"+"_"+getSessionUserId());
+            return (List<RoleMenuVO>) redisTemplate.opsForValue().get("roleMenuVOList");
         }
         return resultRoleList;
 
@@ -87,11 +87,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     public List<Role> getRoles() {
         List<Role> roleList = new ArrayList<>();
-        if(redisTemplate.opsForValue().get("roleList"+"_"+getSessionUserId()) == null){
+        if(redisTemplate.opsForValue().get("roleList") == null){
             roleList = baseMapper.selectList(null);
-             redisTemplate.opsForValue().set("roleList"+"_"+getSessionUserId(),roleList,REDIS_MAX_TIME, TimeUnit.DAYS);
+             redisTemplate.opsForValue().set("roleList",roleList,REDIS_MAX_TIME, TimeUnit.DAYS);
         }else {
-            return (List<Role>) redisTemplate.opsForValue().get("roleList"+"_"+getSessionUserId());
+            return (List<Role>) redisTemplate.opsForValue().get("roleList");
         }
         return roleList;
     }
@@ -120,10 +120,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         }
 
         if(b){
-            redisTemplate.delete("roleMenuVOList"+"_"+getSessionUserId());
-            redisTemplate.delete("roleList"+"_"+getSessionUserId());
-            redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
-            redisTemplate.delete("getRoleByMenuList"+"_"+getSessionUserId());
+            redisTemplate.delete("roleMenuVOList");
+            redisTemplate.delete("roleList");
+            redisTemplate.delete("getUserByRoleList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -155,10 +155,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleMenu.insert();
         }
         if(b){
-            redisTemplate.delete("roleMenuVOList"+"_"+getSessionUserId());
-            redisTemplate.delete("roleList"+"_"+getSessionUserId());
-            redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
-            redisTemplate.delete("getRoleByMenuList"+"_"+getSessionUserId());
+            redisTemplate.delete("roleMenuVOList");
+            redisTemplate.delete("roleList");
+            redisTemplate.delete("getUserByRoleList");
+            redisTemplate.delete("getRoleByMenuList");
             return 1;
         }else {
             return 0;
@@ -183,10 +183,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             // 顺便还要把RoleMenu的关系给删除了
             boolean deleteNum = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("role_id", id));;
             if(b && deleteNum){
-                redisTemplate.delete("roleMenuVOList"+"_"+getSessionUserId());
-                redisTemplate.delete("roleList"+"_"+getSessionUserId());
-                redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
-                redisTemplate.delete("getRoleByMenuList"+"_"+getSessionUserId());
+                redisTemplate.delete("roleMenuVOList");
+                redisTemplate.delete("roleList");
+                redisTemplate.delete("getUserByRoleList");
+                redisTemplate.delete("getRoleByMenuList");
                 return 1;
             }else {
                 return 0;
@@ -200,24 +200,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     public List<RoleMenuVO> getRoleByMenu() {
         List<RoleMenuVO> getRoleByMenuList = new ArrayList<>();
-        if(redisTemplate.opsForValue().get("getRoleByMenuList"+"_"+getSessionUserId())==null){
+        if(redisTemplate.opsForValue().get("getRoleByMenuList")==null){
             getRoleByMenuList = baseMapper.getRoleByMenu();
-            redisTemplate.opsForValue().set("getRoleByMenuList"+"_"+getSessionUserId(),getRoleByMenuList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("getRoleByMenuList",getRoleByMenuList,REDIS_MAX_TIME, TimeUnit.DAYS);
         }else{
-            return (List<RoleMenuVO>) redisTemplate.opsForValue().get("getRoleByMenuList"+"_"+getSessionUserId());
+            return (List<RoleMenuVO>) redisTemplate.opsForValue().get("getRoleByMenuList");
         }
         return getRoleByMenuList;
     }
 
 
-    public Integer getSessionUserId(){
-        User userSession = (User) session.getAttribute("user");
-        if(userSession!=null){
-            return userSession.getId();
-        }else {
-            return 0;
-        }
-    }
 
 
 

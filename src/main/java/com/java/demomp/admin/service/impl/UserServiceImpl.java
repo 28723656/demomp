@@ -8,6 +8,7 @@ import com.java.demomp.admin.entity.UserRole;
 import com.java.demomp.admin.mapper.UserMapper;
 import com.java.demomp.admin.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.java.demomp.plan.service.PlanService;
 import com.java.demomp.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     RedisTemplate redisTemplate;
 
+    @Autowired
+    PlanService planService;
+
     // redis存储的最大时间
     static final Integer REDIS_MAX_TIME = 7;
 
@@ -46,11 +50,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public List<UserRoleVO> getUserList() {
         List<UserRoleVO> userRoleVOList = new ArrayList<>();
         // 放在redis里面
-        if(redisTemplate.opsForValue().get("userRoleVOList"+"_"+getSessionUserId()) == null){
+        if(redisTemplate.opsForValue().get("userRoleVOList") == null){
              userRoleVOList =   baseMapper.getUserList();
-            redisTemplate.opsForValue().set("userRoleVOList"+"_"+getSessionUserId(),userRoleVOList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("userRoleVOList",userRoleVOList,REDIS_MAX_TIME, TimeUnit.DAYS);
         }else{
-            return (List<UserRoleVO>) redisTemplate.opsForValue().get("userRoleVOList"+"_"+getSessionUserId());
+            return (List<UserRoleVO>) redisTemplate.opsForValue().get("userRoleVOList");
         }
 
         return userRoleVOList;
@@ -70,15 +74,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(resultUser == null){
             // 先在t_user表中添加用户
             User user = setUserProperties(userRoleVO);
+
             boolean insert = user.insert();
 
             // 在t_user_role中确定关系
             UserRole userRole = setUserRoleProperties(userRoleVO,user.getId());
             boolean insert1 = userRole.insert();
+            // 还有，初始化3个默认计划
+            Boolean basePlan = planService.insertThreeBasePlan(user.getId());
 
             if(insert && insert1){
-                redisTemplate.delete("userRoleVOList"+"_"+getSessionUserId());
-                redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
+                redisTemplate.delete("userRoleVOList");
+                redisTemplate.delete("getUserByRoleList");
                 return 1;
             }else {
                 return 0;
@@ -117,8 +124,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         if(b){
-            redisTemplate.delete("userRoleVOList"+"_"+getSessionUserId());
-            redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
+            redisTemplate.delete("userRoleVOList");
+            redisTemplate.delete("getUserByRoleList");
             return 1;
         }else {
             return 0;
@@ -151,8 +158,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean b1 = userRole.delete(new QueryWrapper<UserRole>().eq("user_id", id));
 
         if(b && b1){
-            redisTemplate.delete("userRoleVOList"+"_"+getSessionUserId());
-            redisTemplate.delete("getUserByRoleList"+"_"+getSessionUserId());
+            redisTemplate.delete("userRoleVOList");
+            redisTemplate.delete("getUserByRoleList");
             return 1;
         }else {
             return 0;
@@ -166,11 +173,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     public List<UserRoleVO> getUserByRole() {
         List<UserRoleVO> getUserByRoleList = new ArrayList<>();
-        if(redisTemplate.opsForValue().get("getUserByRoleList"+"_"+getSessionUserId())==null){
+        if(redisTemplate.opsForValue().get("getUserByRoleList")==null){
             getUserByRoleList = baseMapper.getUserByRole();
-            redisTemplate.opsForValue().set("getUserByRoleList"+"_"+getSessionUserId(),getUserByRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("getUserByRoleList",getUserByRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
         }else{
-            return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList"+"_"+getSessionUserId());
+            return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList");
         }
         return getUserByRoleList;
     }
@@ -199,11 +206,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         user.setPhone(userRoleVO.getPhone());
         user.setNickName(userRoleVO.getNickName());
+
         // 由于我在修改的时候把密码给隐藏了，所以这里要做一下判断
         if(userRoleVO.getPassword() != null){
             user.setPassword(Md5Util.getMD5WithSalt(userRoleVO.getPassword()));
         }
-        user.setDescription(userRoleVO.getDescription());
+        // 注册用户的时候，手动添加的一些信息
+        if(userRoleVO.getDescription() == null){
+            user.setDescription("你好啊！");
+        }else {
+            user.setDescription(userRoleVO.getDescription());
+        }
         return user;
     }
 
@@ -213,17 +226,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserRole setUserRoleProperties(UserRoleVO userRoleVO,Integer userId){
         UserRole userRole = new UserRole();
         userRole.setUserId(userId);
-        userRole.setRoleId(userRoleVO.getRoleId());
+        // 注册用户的时候，初始化一个角色
+        if(userRole.getRoleId() == null){
+            userRole.setRoleId(2); // 默认为普通用户
+        }else {
+            userRole.setRoleId(userRoleVO.getRoleId());
+        }
         return userRole;
     }
 
-    public Integer getSessionUserId(){
-        User userSession = (User) session.getAttribute("user");
-        if(userSession!=null){
-            return userSession.getId();
-        }else {
-            return 0;
-        }
-    }
 
 }

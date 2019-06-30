@@ -61,9 +61,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
      * @param plan
      * @return
      */
-    public Integer addPlan(Plan plan) {
-        Integer redisUserId = getRedisUserId();
-
+    public Integer addPlan(Plan plan,Integer userId) {
 
         // 1.正常的添加
         // 临时添加，查找父类，添加一个和父类一样的颜色
@@ -80,7 +78,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             }
 
             // 获取已选颜色列表,父类的列表
-            List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("type", 4).eq("user_id",redisUserId));
+            List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("type", 4).eq("user_id",userId));
             // 获取所有有颜色的父类列表
             List<String> colorList = new ArrayList<>();
             for (int i = 0; i < planList.size(); i++) {
@@ -114,11 +112,11 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             plan.setColor(parentPlan.getColor());
         }
 
-        plan.setUserId(redisUserId);
+        plan.setUserId(userId);
         int insert = baseMapper.insert(plan);
 
         // 删除redis
-        handleRedis();
+        handleRedis(userId);
 
         // 2.改变父类的百分比
         // 1.日  -> 周、月、年
@@ -126,41 +124,39 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         // 如果添加的是年计划，就不用更新了
         Integer parentId = plan.getParentId();
         while (parentId != null) {
-            parentId = updateFatherByParentId(parentId);
+            parentId = updateFatherByParentId(parentId,userId);
         }
         return insert;
 
     }
 
     // 暂时没有service调用
-    public List<Plan> getPlanByType(Integer type) {
-        Integer redisUserId = getRedisUserId();
-        return baseMapper.selectList(new QueryWrapper<Plan>().eq("type", type).eq("user_id",redisUserId).orderByDesc("top", "rank"));
+    public List<Plan> getPlanByType(Integer type,Integer userId) {
+        return baseMapper.selectList(new QueryWrapper<Plan>().eq("type", type).eq("user_id",userId).orderByDesc("top", "rank"));
     }
 
     // 获得分组Plan
-    public Map<String, List<Plan>> getGroupPlan() {
-        Integer redisUserId = getRedisUserId();
+    public Map<String, List<Plan>> getGroupPlan(Integer userId) {
 
         // 处理redis
 
-        if(redisTemplate.opsForValue().get("groupPlanList"+"_"+redisUserId) == null){
+        if(redisTemplate.opsForValue().get("groupPlanList"+"_"+userId) == null){
             Map<String, List<Plan>> map = new HashMap<>();
-            map.put("todayPlan",getPlanByType(1));
-            map.put("weekPlan", getPlanByType(2));
-            map.put("monthPlan", getPlanByType(3));
-            map.put("yearPlan", getPlanByType(4));
-            redisTemplate.opsForValue().set("groupPlanList"+"_"+redisUserId,map,REDIS_MAX_TIME,TimeUnit.DAYS);
+            map.put("todayPlan",getPlanByType(1,userId));
+            map.put("weekPlan", getPlanByType(2,userId));
+            map.put("monthPlan", getPlanByType(3,userId));
+            map.put("yearPlan", getPlanByType(4,userId));
+            redisTemplate.opsForValue().set("groupPlanList"+"_"+userId,map,REDIS_MAX_TIME,TimeUnit.DAYS);
             return map;
         }else {
-            return (Map<String, List<Plan>>) redisTemplate.opsForValue().get("groupPlanList"+"_"+redisUserId);
+            return (Map<String, List<Plan>>) redisTemplate.opsForValue().get("groupPlanList"+"_"+userId);
         }
         // 结束处理redis
 
 
     }
 
-    public Integer updatePlanFinishedById(Plan plan) {
+    public Integer updatePlanFinishedById(Plan plan,Integer userId) {
         int finished = plan.getFinished() == 1 ? 0 : 1;
         Double percent = finished == 1 ? 100.0 : 0;
         //1、 更新自己的状态
@@ -169,17 +165,17 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         Integer parentId = plan.getParentId();
         // 遍历更新上面的节点
         while (parentId != null) {
-            parentId = updateFatherByParentId(parentId);
+            parentId = updateFatherByParentId(parentId,userId);
         }
 
         // 删除redis
-        handleRedis();
+        handleRedis(userId);
 
         return updateNum;
     }
 
     // 更新计划
-    public Integer updatePlan(Plan plan) {
+    public Integer updatePlan(Plan plan,Integer userId) {
         // 二话不说，先找出新的父类
         Integer newParentId = plan.getParentId();
         Integer beforeParentId = plan.selectById().getParentId();
@@ -195,24 +191,23 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
             // 如果改变了父类
             // 1.更新原来的父类进度（其实相当于删除了）
             while (beforeParentId != null) {
-                beforeParentId = updateFatherByParentId(beforeParentId);
+                beforeParentId = updateFatherByParentId(beforeParentId,userId);
             }
             //  2.更新新的父类的进度
             while (newParentId != null) {
-                newParentId = updateFatherByParentId(newParentId);
+                newParentId = updateFatherByParentId(newParentId,userId);
             }
         }
 
         // 删除redis
-        handleRedis();
+        handleRedis(userId);
 
 
         return i;
     }
 
     // 通过id删除
-    public Integer deletePlanById(Integer id) {
-        Integer redisUserId = getRedisUserId();
+    public Integer deletePlanById(Integer id,Integer userId) {
         if(id == 118 || id == 119 || id == 120){
             return 0;
         }
@@ -222,28 +217,27 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
         // 二话不说，先删了再说(刀下留人，如果删了父亲节点，儿子没归宿了)
         // 所以要先获得孩子节点，有孩子，不能删除
-        List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", id).eq("user_id",redisUserId));
+        List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", id).eq("user_id",userId));
         if(children != null  && children.size() > 0){
             return 0;
         }
         // 确保没有孩子才能删除
         int i = baseMapper.deleteById(id);
         while (parentId != null) {
-            parentId = updateFatherByParentId(parentId);
+            parentId = updateFatherByParentId(parentId,userId);
         }
 
         // 删除redis
-        handleRedis();
+        handleRedis(userId);
 
         return i;
     }
 
     // 获得树列表，所有的
-    public List<Object> getTreeList() {
-        Integer redisUserId = getRedisUserId();
+    public List<Object> getTreeList(Integer userId) {
 
 
-        String testString = "treeListAll"+"_"+redisUserId;
+        String testString = "treeListAll"+"_"+userId;
 
         if(redisTemplate.opsForValue().get(testString) == null){
             List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>());
@@ -257,32 +251,76 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                     objectList.add(map);
                 }
             }
-            redisTemplate.opsForValue().set("treeListAll"+"_"+redisUserId,objectList,REDIS_MAX_TIME,TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("treeListAll"+"_"+userId,objectList,REDIS_MAX_TIME,TimeUnit.DAYS);
             return objectList;
         }else {
-          return (List<Object>) redisTemplate.opsForValue().get("treeListAll"+"_"+redisUserId);
+          return (List<Object>) redisTemplate.opsForValue().get("treeListAll"+"_"+userId);
         }
     }
 
+    /**
+     * 通过用户id获取用户的通用计划
+     * @param userId
+     * @return
+     */
+    public List<Plan> getBasePlanByUserId(Integer userId) {
+        List<Plan> planList = baseMapper.selectList(new QueryWrapper<Plan>().eq("user_id", userId).eq("base", 1));
+        return planList;
+    }
+
+    /**
+     * 对于新建的用户，插入3个base计划
+     * @param userId
+     * @return
+     */
+    public Boolean insertThreeBasePlan(Integer userId) {
+        // 没办法，一个接一个地插吧，乖乖♂站好
+
+        Plan yearPlan = new Plan();
+        yearPlan.setName("通用年计划(默认)");
+        yearPlan.setBase(1);
+        yearPlan.setType(4);
+        yearPlan.setUserId(userId);
+        yearPlan.insert();
+
+        Plan monthPlan = new Plan();
+        monthPlan.setName("通用月计划(默认)");
+        monthPlan.setBase(1);
+        monthPlan.setParentId(yearPlan.getId());
+        yearPlan.setType(3);
+        monthPlan.setUserId(userId);
+        monthPlan.insert();
+
+        Plan weekPlan = new Plan();
+        weekPlan.setName("通用周计划(默认)");
+        weekPlan.setBase(1);
+        weekPlan.setParentId(monthPlan.getId());
+        yearPlan.setType(2);
+        weekPlan.setUserId(userId);
+        boolean b = weekPlan.insert();
+
+       return b;
+
+    }
+
     // 用于controller的方法，获得树()
-    public List<Object> getTreeList(Integer parentId){
-        Integer redisUserId = getRedisUserId();
+    public List<Object> getTreeList(Integer parentId,Integer userId){
 
 
         QueryWrapper<Plan> query = new QueryWrapper<>();
         if(parentId == null){
-           query = new QueryWrapper<Plan>().isNull("parent_id").eq("user_id",redisUserId);
+           query = new QueryWrapper<Plan>().isNull("parent_id").eq("user_id",userId);
         }else{
-            query = new QueryWrapper<Plan>().eq("parent_id",parentId).eq("user_id",redisUserId);
+            query = new QueryWrapper<Plan>().eq("parent_id",parentId).eq("user_id",userId);
         }
 
-        Object redisTreeList = redisTemplate.opsForValue().get("treeList"+"_"+redisUserId);
+        Object redisTreeList = redisTemplate.opsForValue().get("treeList"+"_"+userId);
         if(redisTreeList == null){
-            List<Object> treeList = getTreeListMethod(parentId, baseMapper.selectList(query));
-            redisTemplate.opsForValue().set("treeList"+"_"+redisUserId,treeList,REDIS_MAX_TIME,TimeUnit.DAYS);
+            List<Object> treeList = getTreeListMethod(parentId, baseMapper.selectList(query),userId);
+            redisTemplate.opsForValue().set("treeList"+"_"+userId,treeList,REDIS_MAX_TIME,TimeUnit.DAYS);
             return treeList;
         }else {
-            List<Object> treeList = (List<Object>) redisTemplate.opsForValue().get("treeList"+"_"+redisUserId);
+            List<Object> treeList = (List<Object>) redisTemplate.opsForValue().get("treeList"+"_"+userId);
             return treeList;
         }
 
@@ -290,8 +328,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
 
     // 获得树    首先传入要找的父节点   和通过这个parentId查找到的list
-    public  List<Object> getTreeListMethod(Integer parentId,List<Plan> listPlan) {
-        Integer redisUserId = getRedisUserId();
+    public  List<Object> getTreeListMethod(Integer parentId,List<Plan> listPlan,Integer userId) {
 
         List<Object > totalList = new ArrayList<>();
         if(listPlan != null && listPlan.size()> 0){
@@ -307,9 +344,9 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                 map.put("percent",plan.getPercent());
                 map.put("rank", PlanUtil.getRankStrByRank(plan.getRank()));
                 // 如果有儿子
-                List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", plan.getId()).eq("user_id",redisUserId));
+                List<Plan> children = baseMapper.selectList(new QueryWrapper<Plan>().eq("parent_id", plan.getId()).eq("user_id",userId));
                 if(children!= null && children.size()>0){
-                    List<Object> list = getTreeListMethod(plan.getId(),children);
+                    List<Object> list = getTreeListMethod(plan.getId(),children,userId);
                     map.put("children",list);
                 }
                 totalList.add(map);
@@ -342,15 +379,14 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
      * @return
      */
     // 抽取一个公共发放，通过父id更新父亲的百分比状态并 返回那个父亲的父id
-    public Integer updateFatherByParentId(Integer parentId) {   // 55
+    public Integer updateFatherByParentId(Integer parentId,Integer userId) {   // 55
 
-        Integer redisUserId = getRedisUserId();
         // 1.通过父id获取父亲实体
         Plan plan = baseMapper.selectById(parentId);
         // 2.通过父节点获取完成的数量和总数量
         // 如果修改后，那个节点下没有儿子了,就要把那个父节点的百分比设置为0
-        Integer countTotal = baseMapper.selectCount(new QueryWrapper<Plan>().eq("parent_id", parentId).eq("user_id",redisUserId));
-        Double percentFinished = baseMapper.selectSumPercent(parentId,redisUserId); // 选出百分比
+        Integer countTotal = baseMapper.selectCount(new QueryWrapper<Plan>().eq("parent_id", parentId).eq("user_id",userId));
+        Double percentFinished = baseMapper.selectSumPercent(parentId,userId); // 选出百分比
         // 3.更新父亲百分比
         Double percent = 0.00;
         if (countTotal == 0) {
@@ -358,7 +394,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         } else {
             percent = percentFinished * 1.00 / countTotal;
         }
-        baseMapper.update(new Plan().setPercent(percent), new QueryWrapper<Plan>().eq("id", parentId).eq("user_id",redisUserId));
+        baseMapper.update(new Plan().setPercent(percent), new QueryWrapper<Plan>().eq("id", parentId).eq("user_id",userId));
         return plan.getParentId();
     }
 
@@ -366,22 +402,14 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
     /**
      * 懒处理，当有增删改的时候，直接删除redis
      */
-    public  void handleRedis(){
-        Integer redisUserId = getRedisUserId();
+    public  void handleRedis(Integer userId){
         // --------处理redis  懒处理,直接删除----------
-        redisTemplate.delete("treeListAll"+"_"+redisUserId);
-        redisTemplate.delete("treeList"+"_"+redisUserId);
-        redisTemplate.delete("groupPlanList"+"_"+redisUserId);
+        redisTemplate.delete("treeListAll"+"_"+userId);
+        redisTemplate.delete("treeList"+"_"+userId);
+        redisTemplate.delete("groupPlanList"+"_"+userId);
         //--------结束redis处理---------
     }
 
-    public   Integer getRedisUserId(){
-        User userSession = (User) session.getAttribute("user");
-        if(userSession!=null){
-            return userSession.getId();
-        }else {
-            return 0;
-        }
-    }
+
 
 }
