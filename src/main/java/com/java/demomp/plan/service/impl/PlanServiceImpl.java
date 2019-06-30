@@ -287,7 +287,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         monthPlan.setName("通用月计划(默认)");
         monthPlan.setBase(1);
         monthPlan.setParentId(yearPlan.getId());
-        yearPlan.setType(3);
+        monthPlan.setType(3);
         monthPlan.setUserId(userId);
         monthPlan.insert();
 
@@ -295,7 +295,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         weekPlan.setName("通用周计划(默认)");
         weekPlan.setBase(1);
         weekPlan.setParentId(monthPlan.getId());
-        yearPlan.setType(2);
+        weekPlan.setType(2);
         weekPlan.setUserId(userId);
         boolean b = weekPlan.insert();
 
