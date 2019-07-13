@@ -227,7 +227,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserRole userRole = new UserRole();
         userRole.setUserId(userId);
         // 注册用户的时候，初始化一个角色
-        if(userRole.getRoleId() == null){
+        if(userRoleVO.getRoleId() == null){
             userRole.setRoleId(2); // 默认为普通用户
         }else {
             userRole.setRoleId(userRoleVO.getRoleId());
