@@ -1,4 +1,4 @@
-package com.java.demomp.ip.entity;
+package com.java.demomp.message.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -28,32 +28,21 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("t_ip")
-public class Ip extends Model<Ip> {
+@TableName("t_message")
+public class Message extends Model<Message> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 留言
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * ip
-     */
-    private String ip;
+    private String message;
 
-    /**
-     * 登录时间
-     */
-    private LocalDateTime loginTime;
-
-    /**
-     * 用户的id
-     */
     private Integer userId;
 
-    /**
-     * 用户名
-     */
     private String username;
 
     @TableLogic
