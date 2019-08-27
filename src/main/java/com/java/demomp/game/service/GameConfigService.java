@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lost丶wind
  * @since 2019-08-27
  */
-public interface IGameConfigService extends IService<GameConfig> {
+public interface GameConfigService extends IService<GameConfig> {
 
+    boolean saveConfig(GameConfig gameConfig);
 }
