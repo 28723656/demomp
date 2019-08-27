@@ -30,4 +30,13 @@ public class GameConfigServiceImpl extends ServiceImpl<GameConfigMapper, GameCon
         int insertNums = baseMapper.insert(gameConfig);
         return insertNums > 0;
     }
+
+    /**
+     * 通过cardId删除
+     * @param cardId
+     * @return
+     */
+    public int deleteCardByCardId(Integer cardId) {
+        return  baseMapper.delete(new UpdateWrapper<GameConfig>().eq("card_id", cardId));
+    }
 }

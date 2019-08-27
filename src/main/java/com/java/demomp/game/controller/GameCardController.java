@@ -55,4 +55,20 @@ public class GameCardController {
     public Result insert(@RequestBody GameCard gameCard){
         return new Result(true,StatusCode.OK,"添加成功",gameCardService.save(gameCard));
     }
+
+
+    /**
+     * 删除一个卡片，就是要删除很多很多关联的东西
+     * @param cardId
+     * @return
+     */
+    @DeleteMapping("/{cardId}")
+    public Result delete(@PathVariable Integer cardId){
+        boolean b = gameCardService.deleteCardByCardId(cardId);
+        if(b){
+            return new Result(true,StatusCode.OK,"删除成功");
+        }else {
+            return new Result(false,StatusCode.ERROR,"删除失败");
+        }
+    }
 }

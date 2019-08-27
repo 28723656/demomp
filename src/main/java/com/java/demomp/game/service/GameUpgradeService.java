@@ -15,4 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface GameUpgradeService extends IService<GameUpgrade> {
 
     void updateStar(GameUpgradeVO gameUpgradeVO);
+
+    int deleteCardByCardId(Integer cardId);
 }

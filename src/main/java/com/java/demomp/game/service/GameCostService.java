@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface GameCostService extends IService<GameCost> {
 
+    int deleteCardByCardId(Integer cardId);
 }

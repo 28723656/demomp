@@ -63,6 +63,15 @@ public class GameUpgradeServiceImpl extends ServiceImpl<GameUpgradeMapper, GameU
     }
 
     /**
+     * 通过cardId删除
+     * @param cardId
+     * @return
+     */
+    public int deleteCardByCardId(Integer cardId) {
+        return baseMapper.delete(new UpdateWrapper<GameUpgrade>().eq("card_id",cardId));
+    }
+
+    /**
      * 公共的插入方法
      */
     public  void commonInsert(GameUpgradeVO gameUpgradeVO,Integer star,int num){
@@ -72,4 +81,7 @@ public class GameUpgradeServiceImpl extends ServiceImpl<GameUpgradeMapper, GameU
         gameUpgrade.setNum(num);
         baseMapper.insert(gameUpgrade);
     }
+
+
+
 }

@@ -52,6 +52,11 @@ public class GameCard extends Model<GameCard> {
     private String type;
 
     /**
+     * 卡片技能 1-金币 2-经验 3-技能
+     */
+    private Integer skill;
+
+    /**
      * 卡片最高的星级。
      */
     private Integer topStar;

@@ -14,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface GameConfigService extends IService<GameConfig> {
 
     boolean saveConfig(GameConfig gameConfig);
+
+    int deleteCardByCardId(Integer cardId);
 }
