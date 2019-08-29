@@ -98,7 +98,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         boolean b = new Menu().deleteById(id);
         // 删除 t_role_menu中的菜单
         boolean delete = new RoleMenu().delete(new QueryWrapper<RoleMenu>().eq("menu_id", id));
-        if(b && delete){
+        if(b){
             redisTemplate.delete("menuList");
             redisTemplate.delete("getRoleByMenuList");
             return 1;
