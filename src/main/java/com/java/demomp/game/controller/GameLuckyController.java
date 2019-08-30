@@ -52,4 +52,19 @@ public class GameLuckyController {
          return new Result(true, StatusCode.OK,"修改成功",gameLuckyService.save(gameLucky));
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/{id}")
+    public  Result deleteLucky(@PathVariable Integer id){
+       boolean b =  gameLuckyService.deleteLucky(id);
+       if(b){
+           return new Result(true,StatusCode.OK,"删除成功");
+       }else {
+           return new Result(false,StatusCode.ERROR,"删除失败");
+       }
+    }
+
 }

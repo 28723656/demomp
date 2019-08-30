@@ -64,11 +64,13 @@ public class GameCardController {
      */
     @DeleteMapping("/{cardId}")
     public Result delete(@PathVariable Integer cardId){
-        boolean b = gameCardService.deleteCardByCardId(cardId);
-        if(b){
+        int code = gameCardService.deleteCardByCardId(cardId);
+        if(StatusCode.OK == code){
             return new Result(true,StatusCode.OK,"删除成功");
-        }else {
+        }else if(StatusCode.ERROR == code) {
             return new Result(false,StatusCode.ERROR,"删除失败");
+        }else {
+            return new Result(false,StatusCode.CANNOTDELETE,"不能被删除");
         }
     }
 }

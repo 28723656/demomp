@@ -2,6 +2,7 @@ package com.java.demomp.game.service;
 
 import com.java.demomp.game.entity.GameCard;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.java.demomp.util.StatusCode;
 
 /**
  * <p>
@@ -13,5 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface GameCardService extends IService<GameCard> {
 
-    boolean deleteCardByCardId(Integer cardId);
+    int deleteCardByCardId(Integer cardId);
 }

@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface GameLuckyService extends IService<GameLucky> {
 
+    boolean deleteLucky(Integer id);
 }
