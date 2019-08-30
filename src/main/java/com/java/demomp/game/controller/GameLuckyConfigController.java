@@ -1,6 +1,7 @@
 package com.java.demomp.game.controller;
 
 
+import com.java.demomp.game.VO.GameLuckyConfigVO;
 import com.java.demomp.game.entity.GameLuckyConfig;
 import com.java.demomp.game.service.GameLuckyConfigService;
 import com.java.demomp.util.Result;

@@ -1,5 +1,6 @@
 package com.java.demomp.game.service;
 
+import com.java.demomp.game.VO.GameLuckyConfigVO;
 import com.java.demomp.game.entity.GameLuckyConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 
