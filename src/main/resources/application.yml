@@ -13,7 +13,7 @@ spring:
       connection-test-query: SELECT 1
       # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 默认:30秒
       # 生产环境 connect-time 10 s
-      connection-timeout: 9000
+      connection-timeout: 30000
       # 一个连接idle状态的最大时长（毫秒），超时则被释放（retired），默认:10分钟
       idle-timeout: 600000
       # 一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired），默认:30分钟 1800000ms，建议设置比数据库超时时长少60秒，参考MySQL wait_timeout 7200s 参数（# 一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired），默认:30分钟 1800000ms，建议设置比数据库超时时长少60秒，参考MySQL wait_timeout参数（show variables like '%timeout%';） -->  ） -->

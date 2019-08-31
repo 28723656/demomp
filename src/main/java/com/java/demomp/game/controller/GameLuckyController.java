@@ -8,6 +8,8 @@ import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * <p>
  *  前端控制器
@@ -77,9 +79,10 @@ public class GameLuckyController {
      */
     @PostMapping("/{userId}/{luckyId}/{openTimes}")
     public Result openLucky(@PathVariable("userId") Integer userId,@PathVariable("luckyId") Integer luckyId,@PathVariable("openTimes") Integer openTimes){
-       int code =  gameLuckyService.openLucky(userId,luckyId,openTimes);
-       if(code == StatusCode.OK){
-           return new Result(true,StatusCode.OK,"开箱吧，少年");
+        Map<String,Object> map  =  gameLuckyService.openLucky(userId,luckyId,openTimes);
+         int code =  (int )map.get("code");
+        if(code== StatusCode.OK){
+           return new Result(true,StatusCode.OK,"开吧，下次会更好的",map.get("data"));
        }else if(code == StatusCode.NOMONEY){
            return new Result(false,StatusCode.ERROR,"金币不足");
        }else {

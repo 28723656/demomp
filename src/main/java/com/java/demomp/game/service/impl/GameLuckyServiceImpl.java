@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -61,7 +64,10 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
 
     // 开箱   link start
     @Transactional
-    public int openLucky(Integer userId, Integer luckyId, Integer openTimes) {
+    synchronized public Map<String,Object> openLucky(Integer userId, Integer luckyId, Integer openTimes) {
+
+        // 0.用于存放返回的数据和返回的状态
+        Map<String,Object> map = new HashMap<>();
 
         // 1.判断用户货币是否足够，注意：加上事务
         GameLucky gameLucky = baseMapper.selectById(luckyId);
@@ -89,8 +95,11 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
         }
         // 比较货币是否足够
         if (myMoneyEntity.getMoneyNum() >= cost) {
-            // 2.足够->
 
+            // 用于存放返回的数据
+            List<GameRecordReward> resultList = new ArrayList<>();
+
+            // 2.足够->
             // 2.1 减去货币：根据luckyId拿到数据，然后根据openTimes减去相应的货币(减去货币是一次性算的)
             myMoneyEntity.setMoneyNum(myMoneyEntity.getMoneyNum() - cost);
             gameMyMoneyService.getBaseMapper().updateById(myMoneyEntity);
@@ -165,12 +174,16 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
                 gameRecordReward.setRewardCoinNums(0);
                 gameRecordReward.setRewardType(1);
                 boolean b = gameRecordRewardService.save(gameRecordReward);
+                resultList.add(gameRecordReward);
             }
-            return StatusCode.OK;
+            map.put("data",resultList);
+            map.put("code",StatusCode.OK);
         } else {
             // 3.不足够 ->
-            return StatusCode.NOMONEY;
+            map.put("code",StatusCode.NOMONEY);
             // 3.1 返回一个货币不足的状态
         }
+
+        return map;
     }
 }

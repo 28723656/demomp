@@ -3,6 +3,8 @@ package com.java.demomp.game.service;
 import com.java.demomp.game.entity.GameLucky;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
  * <p>
  *  服务类
@@ -15,5 +17,5 @@ public interface GameLuckyService extends IService<GameLucky> {
 
     boolean deleteLucky(Integer id);
 
-    int openLucky(Integer userId, Integer luckyId, Integer openTimes);
+    Map<String,Object> openLucky(Integer userId, Integer luckyId, Integer openTimes);
 }
