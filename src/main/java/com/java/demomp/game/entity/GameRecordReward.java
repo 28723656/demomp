@@ -23,43 +23,62 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lost丶wind
- * @since 2019-08-29
+ * @since 2019-08-31
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("t_game_lucky")
-public class GameLucky extends Model<GameLucky> {
+@TableName("t_game_record_reward")
+public class GameRecordReward extends Model<GameRecordReward> {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 抽奖类型1-免费 2-普通 3-高级 4-至尊
-     */
-    private Integer type;
+    private Integer userId;
+
+    private Integer cardId;
 
     /**
-     * 产出
+     * 获得了多少个卡片
      */
-    private String output;
+    private Integer cardNums;
 
     /**
-     * 一次花费
+     * 抽奖的卡片类型
      */
-    private Integer onceCost;
+    private String cardType;
 
     /**
-     * 10次花费
+     * 抽奖的次数，1还是10
      */
-    private Integer tenTimesCost;
+    private Integer cardTimes;
 
     /**
-     * 花费的类型1-金币 2-钻石 3-钥匙
+     * 消耗了多少
      */
-    private Integer costType;
+    private Integer consumeNums;
+
+    /**
+     * 消耗的类型，key,gold，钻石
+     */
+    private Integer consumeType;
+
+    /**
+     * 抽奖的序号 1-10
+     */
+    private Integer rewardOrder;
+
+    /**
+     * 获得金币的数量
+     */
+    private Integer rewardCoinNums;
+
+    /**
+     * 获奖类型：1：卡片 2：金币
+     */
+    private Integer rewardType;
 
     @TableLogic
     private Integer deleted;

@@ -1,15 +1,9 @@
 package com.java.demomp.game.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.time.LocalDateTime;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableField;
 
 import java.io.Serializable;
 
@@ -23,13 +17,13 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lost丶wind
- * @since 2019-08-29
+ * @since 2019-08-31
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("t_game_lucky")
-public class GameLucky extends Model<GameLucky> {
+@TableName("t_game_my_card")
+public class GameMyCard extends Model<GameMyCard> {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,32 +31,32 @@ public class GameLucky extends Model<GameLucky> {
     private Integer id;
 
     /**
-     * 抽奖类型1-免费 2-普通 3-高级 4-至尊
+     * 用户id
      */
-    private Integer type;
+    private Integer userId;
 
     /**
-     * 产出
+     * 卡片id
      */
-    private String output;
+    private Integer cardId;
 
     /**
-     * 一次花费
+     * 碎片数量
      */
-    private Integer onceCost;
+    private Integer num;
 
     /**
-     * 10次花费
+     * 当前星级
      */
-    private Integer tenTimesCost;
+    private Integer currentStar;
 
     /**
-     * 花费的类型1-金币 2-钻石 3-钥匙
+     * 当前等级
      */
-    private Integer costType;
+    private Integer currentRank;
 
     @TableLogic
-    private Integer deleted;
+    private Boolean deleted;
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

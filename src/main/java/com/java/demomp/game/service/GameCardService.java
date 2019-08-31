@@ -15,4 +15,6 @@ import com.java.demomp.util.StatusCode;
 public interface GameCardService extends IService<GameCard> {
 
     int deleteCardByCardId(Integer cardId);
+
+    void saveCard(GameCard gameCard);
 }

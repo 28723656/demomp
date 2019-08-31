@@ -23,43 +23,30 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author lost丶wind
- * @since 2019-08-29
+ * @since 2019-08-31
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("t_game_lucky")
-public class GameLucky extends Model<GameLucky> {
+@TableName("t_game_my_money")
+public class GameMyMoney extends Model<GameMyMoney> {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private Integer userId;
+
     /**
-     * 抽奖类型1-免费 2-普通 3-高级 4-至尊
+     * 货币数量
+     */
+    private Integer moneyNum;
+
+    /**
+     * 货币类型
      */
     private Integer type;
-
-    /**
-     * 产出
-     */
-    private String output;
-
-    /**
-     * 一次花费
-     */
-    private Integer onceCost;
-
-    /**
-     * 10次花费
-     */
-    private Integer tenTimesCost;
-
-    /**
-     * 花费的类型1-金币 2-钻石 3-钥匙
-     */
-    private Integer costType;
 
     @TableLogic
     private Integer deleted;

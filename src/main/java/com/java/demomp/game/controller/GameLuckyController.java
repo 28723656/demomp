@@ -67,4 +67,24 @@ public class GameLuckyController {
        }
     }
 
+
+
+    // `/game/lucky/${user.id}/${luckyId}/${openTimes}`)
+
+    /**
+     * 重点   开箱部分
+     * @return
+     */
+    @PostMapping("/{userId}/{luckyId}/{openTimes}")
+    public Result openLucky(@PathVariable("userId") Integer userId,@PathVariable("luckyId") Integer luckyId,@PathVariable("openTimes") Integer openTimes){
+       int code =  gameLuckyService.openLucky(userId,luckyId,openTimes);
+       if(code == StatusCode.OK){
+           return new Result(true,StatusCode.OK,"开箱吧，少年");
+       }else if(code == StatusCode.NOMONEY){
+           return new Result(false,StatusCode.ERROR,"金币不足");
+       }else {
+           return new Result(false,StatusCode.ERROR,"数据异常");
+       }
+
+    }
 }

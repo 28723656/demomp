@@ -17,4 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameLuckyRoundServiceImpl extends ServiceImpl<GameLuckyRoundMapper, GameLuckyRound> implements GameLuckyRoundService {
 
+    // 选出最大的id
+    public GameLuckyRound selectMaxId() {
+        return baseMapper.selectMaxId();
+    }
 }

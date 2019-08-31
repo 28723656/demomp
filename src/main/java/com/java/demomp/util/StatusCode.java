@@ -16,5 +16,9 @@ public class StatusCode {
     public static final int NODATA =20008;//没有数据
     public static final int CANNOTDELETE =20009;//不能被删除
 
+    public static final int NOMONEY =20010;//货币不足
+
+
+
 
 }

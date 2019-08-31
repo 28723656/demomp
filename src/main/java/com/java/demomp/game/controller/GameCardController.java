@@ -2,12 +2,16 @@ package com.java.demomp.game.controller;
 
 
 import com.java.demomp.game.entity.GameCard;
+import com.java.demomp.game.entity.GamePercent;
 import com.java.demomp.game.service.GameCardService;
+import com.java.demomp.game.service.GamePercentService;
 import com.java.demomp.util.Result;
 import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +57,8 @@ public class GameCardController {
      */
     @PostMapping
     public Result insert(@RequestBody GameCard gameCard){
-        return new Result(true,StatusCode.OK,"添加成功",gameCardService.save(gameCard));
+        gameCardService.saveCard(gameCard);
+        return new Result(true,StatusCode.OK,"添加成功");
     }
 
 

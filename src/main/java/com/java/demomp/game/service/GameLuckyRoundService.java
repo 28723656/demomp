@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface GameLuckyRoundService extends IService<GameLuckyRound> {
 
+    GameLuckyRound selectMaxId();
 }

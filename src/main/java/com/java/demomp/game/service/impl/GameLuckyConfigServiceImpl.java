@@ -47,7 +47,7 @@ public class GameLuckyConfigServiceImpl extends ServiceImpl<GameLuckyConfigMappe
         GameLuckyRound roundCount = gameLuckyRoundService.getOne(new QueryWrapper<GameLuckyRound>().eq("lucky_id",luckyId).orderByDesc("round_count").last("limit 1"));
         if(roundCount == null){
             // 首次添加的话，找到最大的id值，并+1
-            GameLuckyRound maxIdEntity = gameLuckyRoundService.getOne(new QueryWrapper<GameLuckyRound>().orderByDesc("id").last("limit 1"));
+            GameLuckyRound maxIdEntity = gameLuckyRoundService.selectMaxId();
             if(maxIdEntity !=null){
                 roundId = maxIdEntity.getId()+1;
             }

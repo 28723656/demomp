@@ -4,6 +4,8 @@ import com.java.demomp.plan.entity.Dict;
 import com.java.demomp.plan.entity.DictParent;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -14,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface DictParentService extends IService<DictParent> {
 
+    List<Dict> getDictListByParentCode(String code);
 }
