@@ -47,11 +47,12 @@ public class GameLuckyConfigController {
      */
     @GetMapping("/last/{luckyId}")
     public Result getNewestLuckyConfig(@PathVariable Integer luckyId){
-      List<GameLuckyConfig> list =  gameLuckyConfigService.getNewestLuckyConfig(luckyId);
-      if(list !=null){
+        List<GameLuckyConfigVO> list =  gameLuckyConfigService.getNewestLuckyConfig(luckyId);
+      if(list.size() > 0){
           return new Result(true, StatusCode.OK,"查询成功",list);
       }else {
           return new Result(false, StatusCode.NODATA,"没有数据");
       }
     }
+
 }

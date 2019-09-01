@@ -18,6 +18,6 @@ public interface GameLuckyConfigService extends IService<GameLuckyConfig> {
 
     boolean addLuckyConfig(List<GameLuckyConfig> configList);
 
-    List<GameLuckyConfig> getNewestLuckyConfig(Integer luckyId);
+    List<GameLuckyConfigVO> getNewestLuckyConfig(Integer luckyId);
 
 }

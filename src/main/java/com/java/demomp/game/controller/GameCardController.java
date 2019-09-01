@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -76,6 +77,23 @@ public class GameCardController {
             return new Result(false,StatusCode.ERROR,"删除失败");
         }else {
             return new Result(false,StatusCode.CANNOTDELETE,"不能被删除");
+        }
+    }
+
+
+    /**
+     * 展示我的卡片   涉及到很多的表
+     * @param userId
+     * @return
+     */
+    @GetMapping("/showMyCard/{userId}")
+    public Result showMyCard(@PathVariable Integer userId){
+        // 二话不说，交给手下处理,因为要查询很多东西，所以用map比较好
+        List<Map<String, Object>> map = gameCardService.showMyCard(userId);
+        if(map !=null){
+             return new Result(true,StatusCode.OK,"查询成功",map);
+        }else {
+            return new Result(false,StatusCode.ERROR,"查询失败");
         }
     }
 }

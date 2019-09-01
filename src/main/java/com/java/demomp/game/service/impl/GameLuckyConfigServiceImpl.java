@@ -77,13 +77,14 @@ public class GameLuckyConfigServiceImpl extends ServiceImpl<GameLuckyConfigMappe
      * 获取最新的一次的配置
      * @return
      */
-    public List<GameLuckyConfig> getNewestLuckyConfig(Integer luckyId) {
+    public List<GameLuckyConfigVO> getNewestLuckyConfig(Integer luckyId) {
         // 获取最后一次的 round_id
         GameLuckyRound gameLuckyRound = gameLuckyRoundService.getOne(new QueryWrapper<GameLuckyRound>().eq("lucky_id",luckyId).orderByDesc("round_count").last("limit 1"));
 
-        List<GameLuckyConfig> list = baseMapper.selectList(new QueryWrapper<GameLuckyConfig>().eq("round_id", gameLuckyRound.getId()).eq("lucky_id", luckyId));
-        //  List<GameLuckyConfigVO> list = baseMapper.getNewestLuckyConfig(gameLuckyRound.getId(),luckyId);
+       // List<GameLuckyConfig> list = baseMapper.selectList(new QueryWrapper<GameLuckyConfig>().eq("round_id", gameLuckyRound.getId()).eq("lucky_id", luckyId));
+          List<GameLuckyConfigVO> list = baseMapper.getNewestLuckyConfig(gameLuckyRound.getId(),luckyId);
         return list;
     }
+
 
 }

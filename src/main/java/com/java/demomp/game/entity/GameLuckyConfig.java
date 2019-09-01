@@ -61,6 +61,17 @@ public class GameLuckyConfig extends Model<GameLuckyConfig> {
      */
     private Integer luckyId;
 
+    /**
+     * 获奖数量（卡牌不能指定数量）
+     */
+    private Integer rewardNum;
+
+    /**
+     * 获奖类型 1-金币 2-钻石 3-钥匙 4-卡牌
+     */
+    private Integer rewardType;
+
+
     @TableLogic
     private Integer deleted;
 

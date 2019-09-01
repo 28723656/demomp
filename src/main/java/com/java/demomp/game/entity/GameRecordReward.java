@@ -80,6 +80,11 @@ public class GameRecordReward extends Model<GameRecordReward> {
      */
     private Integer rewardType;
 
+    /**
+     * luckyid
+     */
+    private Integer luckyId;
+
     @TableLogic
     private Integer deleted;
 
