@@ -1,6 +1,7 @@
 package com.java.demomp.game.controller;
 
 
+import com.java.demomp.game.VO.GameMyCardVO;
 import com.java.demomp.game.entity.GameCard;
 import com.java.demomp.game.entity.GamePercent;
 import com.java.demomp.game.service.GameCardService;
@@ -89,7 +90,7 @@ public class GameCardController {
     @GetMapping("/showMyCard/{userId}")
     public Result showMyCard(@PathVariable Integer userId){
         // 二话不说，交给手下处理,因为要查询很多东西，所以用map比较好
-        List<Map<String, Object>> map = gameCardService.showMyCard(userId);
+        List<GameMyCardVO> map = gameCardService.showMyCard(userId);
         if(map !=null){
              return new Result(true,StatusCode.OK,"查询成功",map);
         }else {

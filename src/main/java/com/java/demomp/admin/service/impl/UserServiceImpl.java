@@ -8,6 +8,7 @@ import com.java.demomp.admin.entity.UserRole;
 import com.java.demomp.admin.mapper.UserMapper;
 import com.java.demomp.admin.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.java.demomp.game.service.GameMyMoneyService;
 import com.java.demomp.plan.service.PlanService;
 import com.java.demomp.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     PlanService planService;
+
+    @Autowired
+    GameMyMoneyService gameMyMoneyService;
 
     // redis存储的最大时间
     static final Integer REDIS_MAX_TIME = 7;
@@ -82,6 +86,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             boolean insert1 = userRole.insert();
             // 还有，初始化3个默认计划
             Boolean basePlan = planService.insertThreeBasePlan(user.getId());
+            // 还有，初始化用户的货币情况
+            boolean b = gameMyMoneyService.initUserCoin(user.getId());
 
             if(insert && insert1){
                 redisTemplate.delete("userRoleVOList");

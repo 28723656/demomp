@@ -160,8 +160,8 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
                         tempGameMyCard.setUserId(userId);
                         tempGameMyCard.setCardId(percentEntity.getCardId());
                         tempGameMyCard.setNum(percentEntity.getNums());
-                        tempGameMyCard.setCurrentStar(0);
-                        tempGameMyCard.setCurrentRank(1); // 这里改一下，得到的卡片，默认为1级，因为0级的话，没有对应的属性
+                        tempGameMyCard.setCurrentStar(0);//
+                        tempGameMyCard.setCurrentRank(0); // 都是默认0级
                         boolean b = gameMyCardService.save(tempGameMyCard);
                     } else {
                         gameMyCard.setNum(gameMyCard.getNum() + percentEntity.getNums());

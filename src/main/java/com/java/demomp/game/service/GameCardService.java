@@ -1,11 +1,10 @@
 package com.java.demomp.game.service;
 
-import com.java.demomp.game.entity.GameCard;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.java.demomp.util.StatusCode;
+import com.java.demomp.game.VO.GameMyCardVO;
+import com.java.demomp.game.entity.GameCard;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -21,5 +20,5 @@ public interface GameCardService extends IService<GameCard> {
 
     void saveCard(GameCard gameCard);
 
-    List<Map<String, Object>> showMyCard(Integer userId);
+    List<GameMyCardVO> showMyCard(Integer userId);
 }

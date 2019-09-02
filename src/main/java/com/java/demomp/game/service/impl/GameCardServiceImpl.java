@@ -1,6 +1,7 @@
 package com.java.demomp.game.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.java.demomp.game.VO.GameMyCardVO;
 import com.java.demomp.game.entity.*;
 import com.java.demomp.game.mapper.GameCardMapper;
 import com.java.demomp.game.service.*;
@@ -100,13 +101,18 @@ public class GameCardServiceImpl extends ServiceImpl<GameCardMapper, GameCard> i
         gamePercentService.saveBatch(list);
     }
 
+    // 展示卡片，极速版
+    public List<GameMyCardVO> showMyCard(Integer userId) {
+        return baseMapper.showMyCard(userId);
+    }
+
 
     /**
-     * 通过用户id，查询一系列的卡片相关属性
+     * 通过用户id，查询一系列的卡片相关属性,这个方法巨慢,目前已经废了，用上面的方法（等我的优化版）
      * @param userId
      * @return
      */
-    public List<Map<String, Object>> showMyCard(Integer userId) {
+    public List<Map<String, Object>> showMyCardBefore(Integer userId) {
 
         List<Map<String, Object>> redisList = (List<Map<String, Object>>) redisTemplate.opsForValue().get("showMyCard_"+userId);
         // 如果redis里面没有数据
@@ -169,7 +175,7 @@ public class GameCardServiceImpl extends ServiceImpl<GameCardMapper, GameCard> i
                     }
                     list.add(map);
                 }
-                redisTemplate.opsForValue().set("showMyCard_"+userId,list,5, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set("showMyCard_"+userId,list,2, TimeUnit.MINUTES);
                 return list;
             }else {
                 return null;
@@ -180,6 +186,8 @@ public class GameCardServiceImpl extends ServiceImpl<GameCardMapper, GameCard> i
         }
 
     }
+
+
 
 
     public GamePercent generateEntity(int nums,long percent,int cardId ){
