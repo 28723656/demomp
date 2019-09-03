@@ -85,6 +85,11 @@ public class GameRecordReward extends Model<GameRecordReward> {
      */
     private Integer luckyId;
 
+    /**
+     * 独一无二的标记，同批次的时候是相同的
+     */
+    private String uniqueMark;
+
     @TableLogic
     private Integer deleted;
 

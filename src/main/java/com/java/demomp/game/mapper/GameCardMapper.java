@@ -25,7 +25,7 @@ public interface GameCardMapper extends BaseMapper<GameCard> {
             "  myCard.current_star AS currentStar,  " +
             "  myCard.current_rank AS currentRank,  " +
             "  card.skill,  " +
-            "  card.type as cardType,  " +
+            "  card.type AS cardType,  " +
             "  card.top_star AS topStar,  " +
             "  card. NAME AS cardName,  " +
             "  up.num AS updateStarNeedNum,  " +
@@ -38,7 +38,12 @@ public interface GameCardMapper extends BaseMapper<GameCard> {
             "  cost2.inc_experience AS incExperienceNext,  " +
             "  cost2.low_percent AS incKeyLowNext,  " +
             "  cost2.top_percent AS incKeyTopNext,  " +
-            "  max(cost3.rank) AS starTopRank  " +
+            "  max(cost3.rank) AS starTopRank,  " +
+            "  max(cost4.rank) AS topRank," +
+            " cost4.inc_coin AS incCoinFull, " +
+            " cost4.inc_experience AS incExperienceFull, " +
+            " cost4.low_percent AS incKeyLowFull, " +
+            " cost4.top_percent AS incKeyTopFull  " +
             "FROM  " +
             "  t_game_my_card myCard  " +
             "LEFT JOIN t_game_card card ON card.id = myCard.card_id  " +
@@ -47,16 +52,22 @@ public interface GameCardMapper extends BaseMapper<GameCard> {
             "AND up.star = myCard.current_star + 1  " +
             "AND up.deleted = 0  " +
             "LEFT JOIN t_game_cost cost1 ON cost1.card_id = myCard.card_id  " +
-            "AND cost1.rank = myCard.current_rank +1  " +
+            "AND cost1.rank = myCard.current_rank  " +
             "AND cost1.deleted = 0  " +
             "LEFT JOIN t_game_cost cost2 ON cost2.card_id = myCard.card_id  " +
-            "AND cost2.rank = myCard.current_rank + 2  " +
+            "AND cost2.rank = myCard.current_rank + 1  " +
             "AND cost2.deleted = 0  " +
             "LEFT JOIN t_game_cost cost3 ON cost3.card_id = myCard.card_id  " +
-            "AND cost3.star = myCard.current_star + 1  " +
+            "AND cost3.star = myCard.current_star  " +
+            "LEFT JOIN t_game_cost cost4 ON cost4.card_id = myCard.card_id  " +
+            "AND cost4.star = card.top_star  " +
             "WHERE  " +
             "  myCard.user_id = #{userId}  " +
             "GROUP BY  " +
-            "  myCard.card_id")
+            "  myCard.card_id  " +
+            "ORDER BY  " +
+     /*       "  myCard.current_rank DESC,  " +
+            "  myCard.current_star DESC,  " +*/
+            "  card. NAME ASC")
     List<GameMyCardVO> showMyCard(@Param("userId") Integer userId);
 }

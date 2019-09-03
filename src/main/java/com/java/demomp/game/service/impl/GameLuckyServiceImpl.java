@@ -2,7 +2,9 @@ package com.java.demomp.game.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.java.demomp.game.VO.RecordRewardCardVO;
 import com.java.demomp.game.entity.*;
 import com.java.demomp.game.mapper.GameLuckyMapper;
 import com.java.demomp.game.service.*;
@@ -68,6 +70,9 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
 
         // 0.用于存放返回的数据和返回的状态
         Map<String, Object> map = new HashMap<>();
+
+        // 生成独一无二的标记
+        String idStr = IdWorker.getIdStr();
 
         // 1.判断用户货币是否足够，注意：加上事务
         GameLucky gameLucky = baseMapper.selectById(luckyId);
@@ -179,6 +184,7 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
                     gameRecordReward.setRewardCoinNums(0);
                     gameRecordReward.setRewardType(4);
                     gameRecordReward.setLuckyId(luckyEntity.getLuckyId());
+                    gameRecordReward.setUniqueMark(idStr);
                     boolean b = gameRecordRewardService.save(gameRecordReward);
                 } else {
                     // 是获得了货币
@@ -191,6 +197,7 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
                     gameRecordReward.setRewardCoinNums(luckyEntity.getRewardNum());
                     gameRecordReward.setRewardType(luckyEntity.getRewardType());
                     gameRecordReward.setLuckyId(luckyEntity.getLuckyId());
+                    gameRecordReward.setUniqueMark(idStr);
                     boolean b = gameRecordRewardService.save(gameRecordReward);
 
                     // 更新获得的货币
@@ -201,7 +208,9 @@ public class GameLuckyServiceImpl extends ServiceImpl<GameLuckyMapper, GameLucky
 
                 resultList.add(gameRecordReward);
             }
-            map.put("data", resultList);
+
+            List<RecordRewardCardVO> list2 =  gameRecordRewardService.getEntityAndCardName(idStr);
+            map.put("data", list2);
             map.put("code", StatusCode.OK);
         } else {
             // 3.不足够 ->

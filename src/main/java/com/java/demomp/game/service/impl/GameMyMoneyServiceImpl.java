@@ -1,10 +1,13 @@
 package com.java.demomp.game.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.java.demomp.game.entity.GameMyMoney;
 import com.java.demomp.game.mapper.GameMyMoneyMapper;
 import com.java.demomp.game.service.GameMyMoneyService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -31,6 +34,30 @@ public class GameMyMoneyServiceImpl extends ServiceImpl<GameMyMoneyMapper, GameM
         int insert3 =baseMapper.insert(gameMyMoney3);
         return insert3>0;
 
+    }
+
+
+    /**
+     * 彩蛋福利
+     * @param userId
+     * @param clickRank
+     */
+    public void clickReward(Integer userId, Integer clickRank) {
+        int initCoin = 1000;
+        int initDiamond = 200;
+        int initKey = 50;
+        List<GameMyMoney> myMoneyList = baseMapper.selectList(new QueryWrapper<GameMyMoney>().eq("user_id", userId));
+        for(int i=0;i<myMoneyList.size();i++){
+            GameMyMoney myMoney = myMoneyList.get(i);
+            if(myMoney.getType() ==1){
+                myMoney.setMoneyNum(myMoney.getMoneyNum()+(int)(initCoin*(0.8+0.2*clickRank)));
+            }else if(myMoney.getType() ==2){
+                myMoney.setMoneyNum(myMoney.getMoneyNum()+(int)(initDiamond*(0.8+0.2*clickRank)));
+            }else if(myMoney.getType() ==3){
+                myMoney.setMoneyNum(myMoney.getMoneyNum()+(int)(initKey*(0.8+0.2*clickRank)));
+            }
+            baseMapper.updateById(myMoney);
+        }
     }
 
     // 用于初始化

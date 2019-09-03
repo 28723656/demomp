@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface GameMyCardService extends IService<GameMyCard> {
 
+    boolean updateCardStar(Integer userId, Integer cardId, Integer updateType);
 }

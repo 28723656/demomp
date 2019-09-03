@@ -7,11 +7,7 @@ import com.java.demomp.game.service.GameMyMoneyService;
 import com.java.demomp.util.Result;
 import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -37,5 +33,16 @@ public class GameMyMoneyController {
     @GetMapping("/{userId}")
     public Result getMyMoneyByUserId(@PathVariable Integer userId){
         return new Result(true, StatusCode.OK,"查询成功",gameMyMoneyService.list(new QueryWrapper<GameMyMoney>().eq("user_id",userId)));
+    }
+
+    /**
+     * 彩蛋奖励，送福利
+     * @param userId
+     * @return
+     */
+    @PutMapping("/clickReward/{userId}/{clickRank}")
+    public Result clickReward(@PathVariable("userId") Integer userId,@PathVariable("clickRank") Integer clickRank){
+        gameMyMoneyService.clickReward(userId,clickRank);
+       return new Result(true,StatusCode.OK,"送礼成功");
     }
 }

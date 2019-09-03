@@ -50,6 +50,9 @@ public class GameMyCardVO  {
     // cost 当前星级的最高等级为多少
     private Integer starTopRank;
 
+    // cost 当前卡片的最高星级
+    private Integer topRank;
+
 
     // cost 当前升级增加多少金币  / 下一级
     private BigDecimal incCoin;
@@ -64,6 +67,14 @@ public class GameMyCardVO  {
     private BigDecimal incKeyTop;
     private BigDecimal incKeyLowNext;
     private BigDecimal incKeyTopNext;
+
+
+    // cost 满级效果
+    private BigDecimal incCoinFull;
+    private BigDecimal incExperienceFull;
+    private BigDecimal incKeyLowFull;
+    private BigDecimal incKeyTopFull;
+
 
 
 

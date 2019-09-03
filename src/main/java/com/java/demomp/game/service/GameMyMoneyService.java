@@ -14,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface GameMyMoneyService extends IService<GameMyMoney> {
 
     boolean initUserCoin(Integer id);
+
+    void clickReward(Integer userId, Integer clickRank);
 }
