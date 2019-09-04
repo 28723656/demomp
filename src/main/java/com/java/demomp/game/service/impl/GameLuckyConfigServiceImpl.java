@@ -2,6 +2,7 @@ package com.java.demomp.game.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.java.demomp.game.VO.GameLuckyConfigVO;
+import com.java.demomp.game.VO.TempForCardDictionaryVO;
 import com.java.demomp.game.entity.GameLuckyConfig;
 import com.java.demomp.game.entity.GameLuckyRound;
 import com.java.demomp.game.mapper.GameLuckyConfigMapper;
@@ -84,6 +85,15 @@ public class GameLuckyConfigServiceImpl extends ServiceImpl<GameLuckyConfigMappe
        // List<GameLuckyConfig> list = baseMapper.selectList(new QueryWrapper<GameLuckyConfig>().eq("round_id", gameLuckyRound.getId()).eq("lucky_id", luckyId));
           List<GameLuckyConfigVO> list = baseMapper.getNewestLuckyConfig(gameLuckyRound.getId(),luckyId);
         return list;
+    }
+
+
+    /**
+     * 查询每个卡片能在哪个卡包里面进行产出
+     * @return
+     */
+    public List<TempForCardDictionaryVO> getEveryCardOutputPlace() {
+        return baseMapper.getEveryCardOutputPlace();
     }
 
 

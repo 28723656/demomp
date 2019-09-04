@@ -1,6 +1,7 @@
 package com.java.demomp.game.service;
 
 import com.java.demomp.game.VO.GameLuckyConfigVO;
+import com.java.demomp.game.VO.TempForCardDictionaryVO;
 import com.java.demomp.game.entity.GameLuckyConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,4 +21,5 @@ public interface GameLuckyConfigService extends IService<GameLuckyConfig> {
 
     List<GameLuckyConfigVO> getNewestLuckyConfig(Integer luckyId);
 
+    List<TempForCardDictionaryVO> getEveryCardOutputPlace();
 }

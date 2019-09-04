@@ -7,6 +7,8 @@ import com.java.demomp.game.service.GameCostService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -25,5 +27,13 @@ public class GameCostServiceImpl extends ServiceImpl<GameCostMapper, GameCost> i
      */
     public int deleteCardByCardId(Integer cardId) {
         return baseMapper.delete(new UpdateWrapper<GameCost>().eq("card_id",cardId));
+    }
+
+    /**
+     * 获得满级卡片的属性
+     * @return
+     */
+    public List<GameCost> getMaxList() {
+        return baseMapper.getMaxList();
     }
 }

@@ -1,6 +1,7 @@
 package com.java.demomp.game.mapper;
 
 import com.java.demomp.game.VO.GameMyCardVO;
+import com.java.demomp.game.VO.TempForCardDictionaryVO;
 import com.java.demomp.game.entity.GameCard;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -70,4 +71,29 @@ public interface GameCardMapper extends BaseMapper<GameCard> {
             "  myCard.current_star DESC,  " +*/
             "  card. NAME ASC")
     List<GameMyCardVO> showMyCard(@Param("userId") Integer userId);
+
+    /**
+     * 选出每个星级可以升级的等级和消耗多少张卡片
+     * @return
+     */
+    @Select("SELECT  " +
+            "  up.card_id AS cardId,  " +
+            "  up.num AS starNum,  " +
+            "  up.star,  " +
+            "  count(cost.rank) AS rankNum  " +
+            "FROM  " +
+            "  t_game_upgrade up  " +
+            "LEFT JOIN t_game_card card ON up.card_id = card.id  " +
+            "AND card.deleted = 0  " +
+            "LEFT JOIN t_game_cost cost ON up.card_id = cost.card_id  " +
+            "AND up.star = cost.star  " +
+            "WHERE  " +
+            "  up.deleted = 0  " +
+            "GROUP BY  " +
+            "  up.id  " +
+            "ORDER BY  " +
+            "  card.type_dict ASC,  " +
+            "  card. NAME ASC,  " +
+            "  up.star ASC")
+    List<TempForCardDictionaryVO> selectEveryStarDetail();
 }

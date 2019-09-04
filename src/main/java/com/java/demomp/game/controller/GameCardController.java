@@ -1,6 +1,7 @@
 package com.java.demomp.game.controller;
 
 
+import com.java.demomp.game.VO.CardDictionaryVO;
 import com.java.demomp.game.VO.GameMyCardVO;
 import com.java.demomp.game.entity.GameCard;
 import com.java.demomp.game.entity.GamePercent;
@@ -83,7 +84,7 @@ public class GameCardController {
 
 
     /**
-     * 展示我的卡片   涉及到很多的表
+     * 展示我的卡片   涉及到很多的表 (这个位置是不是放错了)
      * @param userId
      * @return
      */
@@ -97,4 +98,16 @@ public class GameCardController {
             return new Result(false,StatusCode.ERROR,"查询失败");
         }
     }
+
+
+    /**
+     * 卡片图鉴
+     * @return
+     */
+    @GetMapping("/dictionary")
+    public Result showCardDictionary(){
+       List<CardDictionaryVO> list =  gameCardService.showCardDictionary();
+       return new Result(true,StatusCode.OK,"查询成功",list);
+    }
+
 }

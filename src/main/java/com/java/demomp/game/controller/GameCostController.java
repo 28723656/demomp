@@ -7,11 +7,7 @@ import com.java.demomp.game.service.GameCostService;
 import com.java.demomp.util.Result;
 import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,4 +42,16 @@ public class GameCostController {
             return new Result(false, StatusCode.ERROR,"添加失败");
         }
     }
+
+
+    /**
+     * 通过cardId查询
+     * @param cardId
+     * @return
+     */
+    @GetMapping("/{cardId}")
+    public Result getListByCardId(@PathVariable Integer cardId){
+        return new Result(true, StatusCode.OK,"查询成功",gameCostService.list(new QueryWrapper<GameCost>().eq("card_id",cardId)));
+    }
+
 }

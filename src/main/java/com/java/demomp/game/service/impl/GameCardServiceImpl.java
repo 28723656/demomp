@@ -1,7 +1,9 @@
 package com.java.demomp.game.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.java.demomp.game.VO.CardDictionaryVO;
 import com.java.demomp.game.VO.GameMyCardVO;
+import com.java.demomp.game.VO.TempForCardDictionaryVO;
 import com.java.demomp.game.entity.*;
 import com.java.demomp.game.mapper.GameCardMapper;
 import com.java.demomp.game.service.*;
@@ -104,6 +106,87 @@ public class GameCardServiceImpl extends ServiceImpl<GameCardMapper, GameCard> i
     // 展示卡片，极速版
     public List<GameMyCardVO> showMyCard(Integer userId) {
         return baseMapper.showMyCard(userId);
+    }
+
+    /**
+     * 卡片字典
+     * @return
+     */
+    public List<CardDictionaryVO> showCardDictionary() {
+       // 1.先查出所有的卡片
+        List<GameCard> gameCardList = baseMapper.selectList(null);
+
+        // 2.查出每个星级 消耗的卡片数量，可以升级的等级
+        List<TempForCardDictionaryVO> cardAndStarNumList = baseMapper.selectEveryStarDetail();
+
+        // 3.查找每一个卡片满级的属性
+        List<GameCost> maxList = gameCostService.getMaxList();
+
+        // 4.查找每一个卡片能在哪个卡包里面产出
+        List<TempForCardDictionaryVO> outputPlaceList = gameLuckyConfigService.getEveryCardOutputPlace();
+
+        // 最后.分类查找
+        // 用于存储最后的结果
+        List<CardDictionaryVO> finalList = new ArrayList<>();
+        for(int i=0;i<gameCardList.size();i++){
+            CardDictionaryVO cardDictionaryVO = new CardDictionaryVO();
+            GameCard gameCard = gameCardList.get(i);
+            // 处理1：设置卡片的一些属性
+            cardDictionaryVO.setId(gameCard.getId());
+            cardDictionaryVO.setName(gameCard.getName());
+            cardDictionaryVO.setType(gameCard.getType());
+            cardDictionaryVO.setSkill(gameCard.getSkill());
+            cardDictionaryVO.setTopStar(gameCard.getTopStar());
+
+
+            // 处理2：每个星级 消耗的卡片数量，可以升级的等级
+            List<Integer> starCostNum = new ArrayList<>();
+            List<Integer> starRankNum = new ArrayList<>();
+            List<Integer> star = new ArrayList<>();
+            for(int a = 0;a<cardAndStarNumList.size();a++){
+                TempForCardDictionaryVO tempForCardDictionaryVO = cardAndStarNumList.get(a);
+                if(tempForCardDictionaryVO !=null && tempForCardDictionaryVO.getCardId() ==gameCard.getId() ){
+                    star.add(tempForCardDictionaryVO.getStar());
+                    starCostNum.add(tempForCardDictionaryVO.getStarNum());
+                    starRankNum.add(tempForCardDictionaryVO.getRankNum());
+                }
+            }
+            cardDictionaryVO.setStar(star);
+            cardDictionaryVO.setStarCostNum(starCostNum);
+            cardDictionaryVO.setStarRankNum(starRankNum);
+
+            // 处理3：满级效果
+            for(int b = 0;b<maxList.size();b++){
+                GameCost gameCost = maxList.get(b);
+                if(gameCost!= null && gameCost.getCardId() == gameCard.getId() ){
+                    if(gameCard.getSkill() == 1){
+                        cardDictionaryVO.setIncCoinFull(gameCost.getIncCoin());
+                    }else if(gameCard.getSkill() == 2){
+                        cardDictionaryVO.setIncExperienceFull(gameCost.getIncExperience());
+                    }else if(gameCard.getSkill() == 3){
+                        cardDictionaryVO.setLowPercentFull(gameCost.getLowPercent());
+                        cardDictionaryVO.setTopPercentFull(gameCost.getTopPercent());
+                    }
+                }
+            }
+
+
+            // 处理4：产出地方
+            List<String > luckyName = new ArrayList<>();
+            for(int c=0;c<outputPlaceList.size();c++){
+                TempForCardDictionaryVO tempForCardDictionaryVO = outputPlaceList.get(c);
+                if(tempForCardDictionaryVO!=null && tempForCardDictionaryVO.getCardId()!=null && tempForCardDictionaryVO.getCardId() == gameCard.getId()){
+                    luckyName.add(tempForCardDictionaryVO.getLuckyName());
+                }
+            }
+            cardDictionaryVO.setRewardPlace(luckyName);
+
+
+            // 最后：统一添加
+            finalList.add(cardDictionaryVO);
+        }
+       return finalList;
+
     }
 
 
