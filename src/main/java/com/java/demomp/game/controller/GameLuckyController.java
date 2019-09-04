@@ -1,6 +1,7 @@
 package com.java.demomp.game.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.java.demomp.game.entity.GameLucky;
 import com.java.demomp.game.service.GameLuckyService;
 import com.java.demomp.util.Result;
@@ -32,6 +33,15 @@ public class GameLuckyController {
     @GetMapping
     public Result list(){
         return new Result(true, StatusCode.OK,"查询成功",gameLuckyService.list());
+    }
+
+    /**
+     * 获取list表,只展示打开了的状态的
+     * @return
+     */
+    @GetMapping("/open")
+    public Result listOpen(){
+        return new Result(true, StatusCode.OK,"查询成功",gameLuckyService.list(new QueryWrapper<GameLucky>().eq("open",1)));
     }
 
     /**
@@ -89,5 +99,22 @@ public class GameLuckyController {
            return new Result(false,StatusCode.ERROR,"数据异常");
        }
 
+    }
+
+    /**
+     * 让这个抽奖是否可用
+     * @param gameLucky
+     * @param open
+     * @return
+     */
+    @PutMapping("/switch/{open}")
+    public Result switchOpen(@RequestBody GameLucky gameLucky,@PathVariable Integer open){
+        gameLucky.setOpen(open);
+        boolean b = gameLuckyService.updateById(gameLucky);
+        if(b){
+            return new Result(true,StatusCode.OK,"修改成功");
+        }else {
+            return new Result(false,StatusCode.ERROR,"修改失败");
+        }
     }
 }

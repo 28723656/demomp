@@ -52,6 +52,11 @@ public class GameCard extends Model<GameCard> {
     private String type;
 
     /**
+     * 为了弥补卡片类型而设定的  1-S 2-A
+     */
+    private Integer typeDict;
+
+    /**
      * 卡片技能 1-金币 2-经验 3-技能
      */
     private Integer skill;

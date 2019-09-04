@@ -39,7 +39,7 @@ public interface GameLuckyConfigMapper extends BaseMapper<GameLuckyConfig> {
             "  config.card_id, lucky.`name` as luckyName  " +
             "FROM  " +
             "  t_game_lucky_config config  " +
-            "LEFT JOIN t_game_lucky lucky ON config.lucky_id = lucky.id and lucky.deleted = 0  " +
+            "LEFT JOIN t_game_lucky lucky ON config.lucky_id = lucky.id and lucky.deleted = 0 AND lucky. OPEN = 1 " +
             "WHERE  " +
             "  config.round_id = (  " +
             "    SELECT  " +

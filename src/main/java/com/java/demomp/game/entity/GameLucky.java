@@ -42,6 +42,16 @@ public class GameLucky extends Model<GameLucky> {
     private Integer type;
 
     /**
+     * 卡包描述
+     */
+    private String description;
+
+    /**
+     * 卡包名称
+     */
+    private String name;
+
+    /**
      * 产出
      */
     private String output;
@@ -60,6 +70,11 @@ public class GameLucky extends Model<GameLucky> {
      * 花费的类型1-金币 2-钻石 3-钥匙
      */
     private Integer costType;
+
+    /**
+     * 是否开启这个抽奖 1-开启  0-不开启
+     */
+    private Integer open;
 
     @TableLogic
     private Integer deleted;
