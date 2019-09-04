@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -123,6 +125,15 @@ public class GameMyCardServiceImpl extends ServiceImpl<GameMyCardMapper, GameMyC
         }else {
             return false;
         }
+    }
+
+
+    /**
+     * 获取每天用户能够 获得奖励的用户数据
+     * @return
+     */
+    public List<GameRewardDay> getEveryDayReward() {
+        return baseMapper.getEveryDayReward();
     }
 
 

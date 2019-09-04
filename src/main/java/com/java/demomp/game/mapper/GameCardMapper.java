@@ -86,7 +86,7 @@ public interface GameCardMapper extends BaseMapper<GameCard> {
             "LEFT JOIN t_game_card card ON up.card_id = card.id  " +
             "AND card.deleted = 0  " +
             "LEFT JOIN t_game_cost cost ON up.card_id = cost.card_id  " +
-            "AND up.star = cost.star  " +
+            "AND up.star = cost.star AND cost.deleted = 0  " +
             "WHERE  " +
             "  up.deleted = 0  " +
             "GROUP BY  " +
