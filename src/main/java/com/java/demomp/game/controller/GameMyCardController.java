@@ -1,15 +1,14 @@
 package com.java.demomp.game.controller;
 
 
+import com.java.demomp.game.entity.GameCost;
 import com.java.demomp.game.service.GameMyCardService;
 import com.java.demomp.util.Result;
 import com.java.demomp.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 /**
  * <p>
@@ -39,5 +38,17 @@ public class GameMyCardController {
        }else {
            return new Result(false,StatusCode.ERROR,"升级失败");
        }
+    }
+
+
+    /**
+     * 通过用户id获取用户所有卡片的技能加成 1,2,3总类型
+     * @param userId
+     * @return
+     */
+    @GetMapping("/skillCount/{userId}")
+    public Result getSkillTotal(@PathVariable Integer userId){
+        GameCost gameCost = gameMyCardService.getSkillTotal(userId);
+        return new Result(true,StatusCode.OK,"查询成功",gameCost);
     }
 }
