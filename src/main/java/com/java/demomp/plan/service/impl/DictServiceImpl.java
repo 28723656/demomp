@@ -1,6 +1,7 @@
 package com.java.demomp.plan.service.impl;
 
 import com.java.demomp.plan.entity.Dict;
+import com.java.demomp.plan.entity.DictParent;
 import com.java.demomp.plan.mapper.DictMapper;
 import com.java.demomp.plan.service.DictService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,4 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
 
+
+    public Dict getMaxOrderListByParentId(Integer parentId) {
+        return baseMapper.getMaxOrderListByParentId(parentId);
+    }
 }

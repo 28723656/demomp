@@ -2,6 +2,7 @@ package com.java.demomp.plan.mapper;
 
 import com.java.demomp.plan.entity.DictParent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DictParentMapper extends BaseMapper<DictParent> {
 
+    @Select("select * from util_dict_parent where deleted = 0 order by order_list desc limit 1")
+    DictParent getMaxOrderList();
 }

@@ -35,4 +35,8 @@ public class DictParentServiceImpl extends ServiceImpl<DictParentMapper, DictPar
         DictParent parent = baseMapper.selectOne(new QueryWrapper<DictParent>().eq("code", code));
        return  dictService.list(new QueryWrapper<Dict>().eq("parent_id",parent.getId()));
     }
+
+    public DictParent getMaxOrderList() {
+        return baseMapper.getMaxOrderList();
+    }
 }

@@ -17,4 +17,6 @@ import java.util.List;
 public interface DictParentService extends IService<DictParent> {
 
     List<Dict> getDictListByParentCode(String code);
+
+    DictParent getMaxOrderList();
 }
