@@ -51,7 +51,7 @@ public class DictController {
      * @param parentId
      * @return
      */
-    @GetMapping("/list")
+    @GetMapping("/list/{parentId}")
     public Result getDictListByParentId(@PathVariable String parentId){
         List<Dict> dictList = dictService.list(new QueryWrapper<Dict>().eq("parent_id", parentId));
         if(dictList!=null){
