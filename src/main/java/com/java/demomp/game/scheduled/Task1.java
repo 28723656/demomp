@@ -40,7 +40,11 @@ public class Task1 {
 
     /**
      * 每天凌晨0点1秒获取 用户的卡片技能3对应的钥匙数量
+     *   0 0/5 * * * ?   每5分钟执行一次
      *
+     *   1 0 0 * * ?   每天凌晨1秒执行
+     *
+     *   每天早上6点执行
      */
     @Scheduled(cron = "1 0 0 * * ?")
    public void getRewardEveryDay(){
@@ -60,7 +64,6 @@ public class Task1 {
         }
         boolean b = gameRewardDayService.saveBatch(newData);
 
-        // 3. 用户每次登陆的时候，判断今天是否已经领取了奖励
 
    }
 
