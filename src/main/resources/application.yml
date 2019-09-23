@@ -25,7 +25,7 @@ spring:
       # 连接池名字
       pool-name: DemoHikariCP
 
-
+# redis配置
   redis:
     host: 47.106.187.222
     pool: 6379
@@ -37,6 +37,11 @@ spring:
         max-idle: 20
         min-idle: 2
     timeout: 5000
+
+
+ #rabbitmq配置
+  rabbitmq:
+    host: 47.106.187.222
 
 
 

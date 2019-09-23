@@ -47,6 +47,14 @@
             <version>3.1.1</version>
         </dependency>
 
+        <!--rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+
+
         <!--代码生成器依赖-->
         <dependency>
             <groupId>com.baomidou</groupId>

@@ -22,7 +22,7 @@ public interface PlanService extends IService<Plan> {
 
     Map<String, List<Plan>> getGroupPlan(Integer userId);
 
-    Integer updatePlanFinishedById(Plan id,Integer userId);
+    Integer updatePlanFinishedById(Plan id,Integer userId,Integer finished);
 
     Integer updatePlan(Plan plan,Integer userId);
 

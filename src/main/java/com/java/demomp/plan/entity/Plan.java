@@ -48,9 +48,10 @@ public class Plan extends Model<Plan> {
     private LocalDateTime endTime;
 
     /**
-     * 实际完成时间
+     * 实际完成时间,因为我要设置空值,使不得，使不得
      */
-    private Date actualTime;
+    //@TableField(strategy=FieldStrategy.IGNORED)
+    private LocalDateTime actualTime;
 
     /**
      * 等级D->S
@@ -63,7 +64,7 @@ public class Plan extends Model<Plan> {
     private Double percent;
 
     /**
-     * 是否已经完成
+     * 是否已经完成   0-未完成  1-完成  2-不做了，假完成
      */
     private Integer finished;
 

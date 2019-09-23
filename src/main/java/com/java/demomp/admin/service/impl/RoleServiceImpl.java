@@ -70,7 +70,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                         menuIdList = new ArrayList<>();
                     }
                 }
-                redisTemplate.opsForValue().set("roleMenuVOList",resultRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
+                redisTemplate.opsForValue().set("roleMenuVOList",resultRoleList,REDIS_MAX_TIME, TimeUnit.MINUTES);
 
             }
         }
@@ -89,7 +89,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         List<Role> roleList = new ArrayList<>();
         if(redisTemplate.opsForValue().get("roleList") == null){
             roleList = baseMapper.selectList(null);
-             redisTemplate.opsForValue().set("roleList",roleList,REDIS_MAX_TIME, TimeUnit.DAYS);
+             redisTemplate.opsForValue().set("roleList",roleList,REDIS_MAX_TIME, TimeUnit.MINUTES);
         }else {
             return (List<Role>) redisTemplate.opsForValue().get("roleList");
         }
@@ -202,7 +202,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         List<RoleMenuVO> getRoleByMenuList = new ArrayList<>();
         if(redisTemplate.opsForValue().get("getRoleByMenuList")==null){
             getRoleByMenuList = baseMapper.getRoleByMenu();
-            redisTemplate.opsForValue().set("getRoleByMenuList",getRoleByMenuList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("getRoleByMenuList",getRoleByMenuList,REDIS_MAX_TIME, TimeUnit.MINUTES);
         }else{
             return (List<RoleMenuVO>) redisTemplate.opsForValue().get("getRoleByMenuList");
         }

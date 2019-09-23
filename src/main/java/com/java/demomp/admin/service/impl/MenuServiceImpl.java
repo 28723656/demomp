@@ -39,7 +39,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<Menu> getMenuList() {
         if (redisTemplate.opsForValue().get("menuList") == null) {
             List<Menu> menuList = baseMapper.selectList(null);
-            redisTemplate.opsForValue().set("menuList",menuList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("menuList",menuList,REDIS_MAX_TIME, TimeUnit.MINUTES);
             return menuList;
         }else {
             return (List<Menu>) redisTemplate.opsForValue().get("menuList");

@@ -89,9 +89,9 @@ public class PlanController {
      * @param plan
      * @return
      */
-    @PutMapping("/{userId}")
-    public Result updatePlanFinishedById(@RequestBody Plan plan,@PathVariable Integer userId) {
-        Integer updateNum = planService.updatePlanFinishedById(plan,userId);
+    @PutMapping("/{userId}/{finished}")
+    public Result updatePlanFinishedById(@RequestBody Plan plan,@PathVariable Integer userId,@PathVariable Integer finished) {
+        Integer updateNum = planService.updatePlanFinishedById(plan,userId,finished);
         if (updateNum > 0) {
             return new Result(true, StatusCode.OK, "修改成功");
         } else {

@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,11 +143,16 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
         if(redisTemplate.opsForValue().get("groupPlanList"+"_"+userId) == null){
             Map<String, List<Plan>> map = new HashMap<>();
-            map.put("todayPlan",getPlanByType(1,userId));
+         /*   map.put("todayPlan",getPlanByType(1,userId));
             map.put("weekPlan", getPlanByType(2,userId));
             map.put("monthPlan", getPlanByType(3,userId));
-            map.put("yearPlan", getPlanByType(4,userId));
-            redisTemplate.opsForValue().set("groupPlanList"+"_"+userId,map,REDIS_MAX_TIME,TimeUnit.DAYS);
+            map.put("yearPlan", getPlanByType(4,userId));*/
+            map.put("todayPlan",getTodayPlanCommon(userId));
+            map.put("todayUnFinishedPlan",getTodayUnFinishedPlanCommon(userId));
+            map.put("weekPlan", getWeekPlanCommon(userId));
+            map.put("monthPlan", getMonthPlanCommon(userId));
+            map.put("yearPlan", getYearPlanCommon(userId));
+            redisTemplate.opsForValue().set("groupPlanList"+"_"+userId,map,REDIS_MAX_TIME,TimeUnit.MINUTES);
             return map;
         }else {
             return (Map<String, List<Plan>>) redisTemplate.opsForValue().get("groupPlanList"+"_"+userId);
@@ -156,11 +162,12 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     }
 
-    public Integer updatePlanFinishedById(Plan plan,Integer userId) {
-        int finished = plan.getFinished() == 1 ? 0 : 1;
+    public Integer updatePlanFinishedById(Plan plan,Integer userId,Integer finished) {
         Double percent = finished == 1 ? 100.0 : 0;
+        LocalDateTime finishTime = finished != 0?LocalDateTime.now():null;
         //1、 更新自己的状态
-        int updateNum = baseMapper.update(new Plan().setFinished(finished).setPercent(percent), new UpdateWrapper<Plan>().eq("id", plan.getId()));
+       // int updateNum = baseMapper.update(new Plan().setFinished(finished).setPercent(percent).setActualTime(finishTime), new UpdateWrapper<Plan>().eq("id", plan.getId()));
+        baseMapper.updateFinished(finished,percent,finishTime,plan.getId());
 
         Integer parentId = plan.getParentId();
         // 遍历更新上面的节点
@@ -171,7 +178,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         // 删除redis
         handleRedis(userId);
 
-        return updateNum;
+        return 1;
     }
 
     // 更新计划
@@ -251,7 +258,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                     objectList.add(map);
                 }
             }
-            redisTemplate.opsForValue().set("treeListAll"+"_"+userId,objectList,REDIS_MAX_TIME,TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("treeListAll"+"_"+userId,objectList,REDIS_MAX_TIME,TimeUnit.MINUTES);
             return objectList;
         }else {
           return (List<Object>) redisTemplate.opsForValue().get("treeListAll"+"_"+userId);
@@ -317,7 +324,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         Object redisTreeList = redisTemplate.opsForValue().get("treeList"+"_"+userId);
         if(redisTreeList == null){
             List<Object> treeList = getTreeListMethod(parentId, baseMapper.selectList(query),userId);
-            redisTemplate.opsForValue().set("treeList"+"_"+userId,treeList,REDIS_MAX_TIME,TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("treeList"+"_"+userId,treeList,REDIS_MAX_TIME,TimeUnit.MINUTES);
             return treeList;
         }else {
             List<Object> treeList = (List<Object>) redisTemplate.opsForValue().get("treeList"+"_"+userId);
@@ -411,5 +418,46 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
     }
 
 
+    /**
+     * 获得今日计划
+     */
+
+    public List<Plan> getTodayPlanCommon(Integer userId){
+       return  baseMapper.getTodayPlanCommon(userId);
+    }
+
+
+    /**
+     * 获取没有完成的日计划
+     * @param userId
+     * @return
+     */
+    public List<Plan> getTodayUnFinishedPlanCommon(Integer userId){
+        return  baseMapper.getTodayUnFinishedPlanCommon(userId);
+    }
+
+
+    /**
+     * 本周计划
+     */
+    public List<Plan> getWeekPlanCommon(Integer userId){
+        return  baseMapper.getWeekPlanCommon(userId);
+    }
+
+
+    /**
+     * 本月计划
+     */
+    public List<Plan> getMonthPlanCommon(Integer userId){
+        return  baseMapper.getMonthPlanCommon(userId);
+    }
+
+    /**
+     * 本年计划
+     */
+
+    public List<Plan> getYearPlanCommon(Integer userId){
+        return baseMapper.getYearPlanCommon(userId);
+    }
 
 }

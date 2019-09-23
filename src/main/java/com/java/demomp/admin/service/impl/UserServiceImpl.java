@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 放在redis里面
         if(redisTemplate.opsForValue().get("userRoleVOList") == null){
              userRoleVOList =   baseMapper.getUserList();
-            redisTemplate.opsForValue().set("userRoleVOList",userRoleVOList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("userRoleVOList",userRoleVOList,REDIS_MAX_TIME, TimeUnit.MINUTES);
         }else{
             return (List<UserRoleVO>) redisTemplate.opsForValue().get("userRoleVOList");
         }
@@ -181,7 +181,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<UserRoleVO> getUserByRoleList = new ArrayList<>();
         if(redisTemplate.opsForValue().get("getUserByRoleList")==null){
             getUserByRoleList = baseMapper.getUserByRole();
-            redisTemplate.opsForValue().set("getUserByRoleList",getUserByRoleList,REDIS_MAX_TIME, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("getUserByRoleList",getUserByRoleList,REDIS_MAX_TIME, TimeUnit.MINUTES);
         }else{
             return (List<UserRoleVO>) redisTemplate.opsForValue().get("getUserByRoleList");
         }
