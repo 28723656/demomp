@@ -20,7 +20,7 @@ import com.java.demomp.star.vo.StarTransUserVO;
  */
 public interface StarTransMapper extends BaseMapper<StarTrans> {
 
-  @Select("SELECT t.*, u2.nick_name AS otherName FROM t_star_trans t LEFT JOIN t_user u ON t.user_id = u.id and t.user_id = #{userId} LEFT JOIN t_user u2 ON t.other_id = u2.id")
+  @Select("SELECT t.*, u2.nick_name AS otherName FROM t_star_trans t LEFT JOIN t_user u ON t.user_id = u.id  LEFT JOIN t_user u2 ON t.other_id = u2.id where  t.user_id = #{userId}")
   List<StarTransUserVO> getTransListByUserId(@Param("userId") Integer userId);
 
   @Select("select u.* from t_user_role ur left join t_user u on ur.user_id = u.id where ur.role_id = 11")
