@@ -55,7 +55,7 @@ public class StarTransServiceImpl extends ServiceImpl<StarTransMapper, StarTrans
       otherUser.insert();
     }
     starUser.setNum(starUser.getNum() - starTrans.getTransNum());
-    otherUser.setNum(starUser.getNum() + starTrans.getTransNum());
+    otherUser.setNum(otherUser.getNum() + starTrans.getTransNum());
     // 1.用户减分
     starUserService.updateById(starUser);
     // 2.其他用户加分
