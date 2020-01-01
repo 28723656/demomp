@@ -14,6 +14,6 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface GameSignInMapper extends BaseMapper<GameSignIn> {
 
-    @Select("SELECT * FROM t_game_sign_in where TO_DAYS(day_time) = TO_DAYS(NOW()) and deleted =0")
+    @Select("SELECT * FROM t_game_sign_in s WHERE day(NOW()) = s.day AND s.deleted = 0")
     GameSignIn findTodayReward();
 }
